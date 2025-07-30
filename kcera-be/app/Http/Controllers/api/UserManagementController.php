@@ -3,12 +3,17 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\ApprovalMail;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Http\Controllers\api\BaseController as BaseController;
 use Illuminate\Support\Facades\Auth;
 use Validator;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
+
+
 
 
 class UserManagementController extends BaseController
@@ -33,7 +38,21 @@ class UserManagementController extends BaseController
                 })
                 ->orderByDesc('created_at')
                 ->get();
-   
+
+        foreach ($users as $user){
+
+            $user->front_id_photo = $user->front_id_photo 
+                ? url('/public-image/id_photos/' . basename($user->front_id_photo))
+                : null;
+
+            $user->back_id_photo = $user->back_id_photo 
+                ? url('/public-image/id_photos/' . basename($user->back_id_photo))
+                : null;
+
+            $user->face_photo = $user->face_photo 
+                ? url('/public-image/face_photos/' . basename($user->face_photo))
+                : null;
+            }
 
             if($users->count() === 0){
                 return $this->sendError('No user to display', []);
@@ -41,6 +60,26 @@ class UserManagementController extends BaseController
 
             return $this->sendResponse($users, 'list of users');
         
+    }
+
+    public function approveUser(Request $request, string $id): JsonResponse
+    {
+        $user = User::find($id);
+
+        if(!$user) {
+            return $this->sendError('User not found', []);
+        }
+
+        if($user->approval_status === 'approved') {
+            return $this->sendError('User already approved', []);
+        }
+
+        $user->approval_status = 'approved';
+        $user->save();
+
+
+        Mail::to($user->email)->send(new ApprovalMail($user->name));
+        return $this->sendResponse([], 'User approved successfully');
 
     }
 }

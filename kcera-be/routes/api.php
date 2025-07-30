@@ -20,8 +20,9 @@ Route::middleware(['auth:sanctum'])->prefix('user')->group(function(){
         
         Route::controller(UserManagementController::class)->group( function(){
             Route::get('list', 'index');
+            Route::post('approve/{id}', 'approveUser');
         });
-    });
+    }); 
 
     Route::controller(AuthController::class)->group(function(){
         Route::post('logout', 'logout');

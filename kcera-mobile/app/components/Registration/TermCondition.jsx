@@ -22,27 +22,20 @@ export default function TermCondition() {
   const toggleCheckbox = () => setAccepted(!accepted);
 
   return (
-    <Modal visible={visible} transparent={true} animationType="slide">
-      <ScrollView>
-        <View className="items-center justify-center flex-1 px-4 bg-white ">
-          <View
-            className="bg-white rounded w-full max-w-md max-h-[100%] shadow-lg shadow-black"
-            style={Styles.view}
-          >
-            <View className="flex items-center w-full">
+    <Modal visible={visible} transparent={false} animationType="slide">
+      <View style={styles.modalContainer}>
+        <View style={styles.modalContent}>
+          <ScrollView contentContainerStyle={styles.scrollContent}>
+            <View style={styles.imageContainer}>
               <Image
                 source={require("../../../assets/app-images/KCERA.png")}
-                className="w-[100px] h-[100px]"
+                style={styles.logo}
               />
             </View>
-            <Text
-              className="w-full mb-3 font-bold text-center"
-              style={Styles.title}
-            >
-              Terms & Conditions
-            </Text>
 
-            <ScrollView className="mb-4" showsVerticalScrollIndicator={true}>
+            <Text style={styles.title}>Terms & Conditions</Text>
+
+            <View style={styles.termsList}>
               {[
                 "KCERA helps residents report emergencies, notify responders, and track reports.",
                 "You must provide accurate info and avoid false reports or spam.",
@@ -54,46 +47,27 @@ export default function TermCondition() {
                 "KCERA may update these terms; major updates will be shown in-app.",
                 "For questions, contact the KCERA development team.",
               ].map((item, index) => (
-                <Text
-                  key={index}
-                  className="mb-2 leading-relaxed text-gray-700"
-                  style={Styles.text}
-                >
+                <Text key={index} style={styles.termItem}>
                   • {item}
                 </Text>
               ))}
-            </ScrollView>
+            </View>
 
-            {/* Custom Checkbox */}
             <Pressable
               onPress={toggleCheckbox}
-              className="flex-row items-center px-1 mb-4"
+              style={styles.checkboxContainer}
             >
               <View
-                style={{
-                  width: 20,
-                  height: 20,
-                  borderRadius: 4,
-                  borderWidth: 2,
-                  marginRight: 8,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  backgroundColor: accepted ? "#2563eb" : "white",
-                  borderColor: accepted ? "#2563eb" : "#9ca3af",
-                }}
+                style={[styles.checkbox, accepted && styles.checkboxChecked]}
               >
-                {accepted && (
-                  <Text className="text-xs font-bold text-white">✓</Text>
-                )}
+                {accepted && <Text style={styles.checkboxText}>✓</Text>}
               </View>
-
-              <Text style={Styles.text}>
+              <Text style={styles.checkboxLabel}>
                 I accept the terms and conditions.
               </Text>
             </Pressable>
 
-            <View className="px-1 mt-4">
-              <Text></Text>
+            <View style={styles.buttonWrapper}>
               <Button
                 title="Continue"
                 onPress={handleContinue}
@@ -102,55 +76,103 @@ export default function TermCondition() {
               />
             </View>
 
-            <View>
-              <Text
-                onPress={() =>
-                  Linking.openURL(
-                    "https://www.linkedin.com/in/shem-regidor-00a991313/"
-                  )
-                }
-                style={Styles.linkButton}
-              >
-                Contact System Developer Via LinkedIn
-              </Text>
+            <Text
+              onPress={() =>
+                Linking.openURL(
+                  "https://www.linkedin.com/in/shem-regidor-00a991313/"
+                )
+              }
+              style={styles.linkButton}
+            >
+              Contact System Developer Via LinkedIn
+            </Text>
 
-              <Text
-                onPress={() =>
-                  Linking.openURL("https://www.facebook.com/shemmayo.regidor.5")
-                }
-                style={Styles.linkButton}
-              >
-                Contact System Developer Via Facebook
-              </Text>
-            </View>
-          </View>
+            <Text
+              onPress={() =>
+                Linking.openURL("https://www.facebook.com/shemmayo.regidor.5")
+              }
+              style={styles.linkButton}
+            >
+              Contact System Developer Via Facebook
+            </Text>
+          </ScrollView>
         </View>
-      </ScrollView>
+      </View>
     </Modal>
   );
 }
 
-const Styles = StyleSheet.create({
+const styles = StyleSheet.create({
+  modalContainer: {
+    flex: 1,
+    backgroundColor: "#ffffff",
+  },
+  modalContent: {
+    flex: 1,
+    padding: 20,
+  },
+  scrollContent: {
+    paddingBottom: 40,
+  },
+  imageContainer: {
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  logo: {
+    width: 100,
+    height: 100,
+    resizeMode: "contain",
+  },
   title: {
+    fontSize: 26,
+    fontWeight: "bold",
     textAlign: "center",
-    fontSize: 30,
+    marginBottom: 20,
+  },
+  termsList: {
+    marginBottom: 20,
+  },
+  termItem: {
+    fontSize: 16,
+    color: "#374151",
     marginBottom: 10,
+    lineHeight: 24,
   },
-
-  view: {
-    padding: 10,
-    elevation: 5,
-    borderRadius: 8,
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
   },
-
+  checkbox: {
+    width: 22,
+    height: 22,
+    borderRadius: 4,
+    borderWidth: 2,
+    borderColor: "#9ca3af",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 10,
+  },
+  checkboxChecked: {
+    backgroundColor: "#2563eb",
+    borderColor: "#2563eb",
+  },
+  checkboxText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 14,
+  },
+  checkboxLabel: {
+    fontSize: 16,
+    color: "#111827",
+  },
+  buttonWrapper: {
+    marginBottom: 20,
+  },
   linkButton: {
+    color: "#2563eb",
     textAlign: "center",
-    color: "blue",
-    backgroundColor: "transparent",
-    marginTop: 6,
-  },
-
-  text: {
-    fontSize: 18,
+    marginTop: 10,
+    textDecorationLine: "underline",
   },
 });

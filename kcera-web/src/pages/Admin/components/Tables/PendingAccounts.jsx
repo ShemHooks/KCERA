@@ -63,38 +63,26 @@ const PendingAccounts = ({ users, approvePending, declinePending }) => {
                 <TableCell>{user.address}</TableCell>
                 <TableCell>
                   <img
-                    src={`http://127.0.0.1:8000/storage/${user.front_id_photo}`}
+                    src={user.front_id_photo}
                     alt="Front ID"
                     style={{ width: 60, cursor: "pointer" }}
-                    onClick={() =>
-                      handleImageClick(
-                        `http://127.0.0.1:8000/storage/${user.front_id_photo}`
-                      )
-                    }
+                    onClick={() => handleImageClick(user.front_id_photo)}
                   />
                 </TableCell>
                 <TableCell>
                   <img
-                    src={`http://127.0.0.1:8000/storage/${user.back_id_photo}`}
+                    src={user.back_id_photo}
                     alt="Back ID"
                     style={{ width: 60, cursor: "pointer" }}
-                    onClick={() =>
-                      handleImageClick(
-                        `http://127.0.0.1:8000/storage/${user.back_id_photo}`
-                      )
-                    }
+                    onClick={() => handleImageClick(user.back_id_photo)}
                   />
                 </TableCell>
                 <TableCell>
                   <img
-                    src={`http://127.0.0.1:8000/storage/${user.face_photo}`}
+                    src={user.face_photo}
                     alt="Face Photo"
                     style={{ width: 60, cursor: "pointer" }}
-                    onClick={() =>
-                      handleImageClick(
-                        `http://127.0.0.1:8000/storage/${user.face_photo}`
-                      )
-                    }
+                    onClick={() => handleImageClick(user.face_photo)}
                   />
                 </TableCell>
                 <TableCell>

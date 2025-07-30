@@ -10,7 +10,7 @@ import GetPendingUserApi from "./API/GetPendingUserApi";
 import GetResidentsApi from "./API/GetResidentsApi";
 import GetRespondersApi from "./API/GetRespondersApi";
 import GetDriversApi from "./API/GetDriversApi";
-
+import ApproveUserApi from "./API/ApproveUserApi";
 //navigation
 import { NAVIGATION } from "./components/ContentNavigation";
 
@@ -272,7 +272,7 @@ export default function AdminDashboard() {
           {renderContent(
             router.pathname.slice(1),
             pendingUsers,
-            (id) => approvePending(id, handleGetPendingUsers),
+            (id) => ApproveUserApi(id, handleGetPendingUsers),
             (id) => declinePending(id, handleGetPendingUsers),
             approveUsers,
             responders,
