@@ -5,7 +5,7 @@
     <title>Your Temporary Password</title>
 </head>
 <body>
-    <p>Hello {{ $name }},</p>
+    <p>Hello {{ $user }},</p>
 
     <p>Your account has been created by the System Administrator.</p>
 

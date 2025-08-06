@@ -26,6 +26,7 @@ const GetPendingUserApi = async () => {
   } catch (error) {
     return {
       users: [],
+
       message:
         error.response?.data?.message ||
         "Something went wrong. Please try again.",

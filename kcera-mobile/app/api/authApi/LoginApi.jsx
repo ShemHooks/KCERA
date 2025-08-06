@@ -23,16 +23,17 @@ const LoginApi = async (email, password) => {
       console.log("Login error:", response.statusText);
     }
 
-    const userStatus = response.data.data.approval;
+    const user_status = response.data.data.approval;
     const token = response.data.data.token;
-    const userRole = response.data.data.role;
+    const user_role = response.data.data.role;
 
-    if (userStatus === "pending") {
+    if (user_status === "pending") {
       router.replace(ROUTES.RESIDENTS.PENDING_USER);
       return;
     } else {
       await SecureStore.setItemAsync("authToken", token);
-      if (userRole === "residents") {
+      await SecureStore.setItemAsync("userRole", user_role);
+      if (user_role === "residents") {
         router.replace(ROUTES.RESIDENTS.DASHBOARD);
       }
     }

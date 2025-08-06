@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\api;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -11,6 +10,8 @@ use Illuminate\Support\Facades\Auth;
 use Validator;
 use Illuminate\Support\Str;
 use App\Mail\SendTemporaryPassword;
+use Illuminate\Support\Facades\Mail;
+
 
 class AuthController extends BaseController
 {
@@ -28,7 +29,7 @@ class AuthController extends BaseController
             'face_photo' => 'required|mimes:jpeg,jpg,png'
         ]);
 
-        if($validator->fails()){
+        if ($validator->fails()) {
             return $this->sendError('validation Error.', $validator->errors());
         }
 
@@ -43,17 +44,17 @@ class AuthController extends BaseController
 
         $input['front_id_photo'] = $request->file('front_id_photo')->store('uploads/id_photos', 'public');
         $input['back_id_photo'] = $request->file('back_id_photo')->store('uploads/id_photos', 'public');
-        $input['face_photo'] = $request->file('face_photo')->store('uploads/face_photos','public');
+        $input['face_photo'] = $request->file('face_photo')->store('uploads/face_photos', 'public');
 
         $user = User::create($input);
 
-        if(!$user){
+        if (!$user) {
             return $this->sendError('Unable to process registration', []);
         }
 
         return $this->sendResponse($user, 'Registration Successful');
 
-    } 
+    }
 
     public function login(Request $request): JsonResponse
     {
@@ -62,58 +63,63 @@ class AuthController extends BaseController
             'password' => 'required'
         ]);
 
-        if($validator->fails()){
+        if ($validator->fails()) {
             return $this->sendError('Validation Error', $validator->errors());
         }
 
-        if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
 
             $user = Auth::user();
 
-        if ($user->approval_status === 'pending') {
-            return $this->sendResponse([
-                'approval' => 'pending',
-                'token' => null
-            ], 'Account is pending');
-        }
+            if ($user->approval_status === 'pending') {
+                return $this->sendResponse([
+                    'approval' => 'pending',
+                    'token' => null
+                ], 'Account is pending');
+            }
 
+            $user->status = 'active';
+            $user->save();
 
             $success['token'] = $user->createToken('Authenticated')->plainTextToken;
             $success['name'] = $user->name;
             $success['role'] = $user->role;
+            $success['required_change_pass'] = $user->required_change_pass;
 
             return $this->sendResponse($success, 'User Login Successfully');
 
         }
 
-        
+        return $this->sendError('Unauthorized', ['error' => 'invalid credentials']);
+
     }
 
     public function registerEmployees(Request $request): JsonResponse
     {
-         $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'gender' => 'required',
             'role' => 'required',
             'address' => 'required',
-         ]);
+            'phone' => 'required',
+        ]);
 
-         if($validator->fails()){
+        if ($validator->fails()) {
             return $this->sendError('Validation Error', $validator->errors());
-         }
+        }
 
-         $input = $request->all();
-         $temp_password = Str::random(8);
-         $input['password'] = bcrypt($temp_password);
-         $input['required_change_pass'] = true;
-         $input['approval_status'] = 'approved';
+        $input = $request->all();
+        $temp_password = Str::random(8);
+        $input['password'] = bcrypt($temp_password);
+        $input['required_change_pass'] = true;
+        $input['approval_status'] = 'approved';
 
-         $user = User::create($input);
+        $user = User::create($input);
 
-         Mail::to($user->email)->send(new SendTemporaryPassword($user->name, $temp_password));
+        Mail::to($user->email)->send(new SendTemporaryPassword($user->name, $temp_password));
 
-         return $this->sendResponse([], 'User Created Succefully');
+        return $this->sendResponse([], 'User Created Succefully');
     }
 
     public function changePassword(Request $request): JsonResponse
@@ -125,24 +131,24 @@ class AuthController extends BaseController
             'new_password' => 'required|string|min:8'
         ]);
 
-        if($validator->fails()){
+        if ($validator->fails()) {
             return $this->sendError('Validation Error', $validator->errors());
         }
 
-         if (!Hash::check($request->input('temp_password'), $user->password)) {
-        return $this->sendError('Invalid temporary password', ['error' => 'Temporary password is incorrect.']);
-    }
+        if (!Hash::check($request->input('temp_password'), $user->password)) {
+            return $this->sendError('Invalid temporary password', ['error' => 'Temporary password is incorrect.']);
+        }
 
-    if(Hash::check($request->input('new_password'), $user->password)){
-        return $this->sendError('Detected Reusing of Password', ['error' => 'New password must be different from the old password']);
-    }
+        if (Hash::check($request->input('new_password'), $user->password)) {
+            return $this->sendError('Detected Reusing of Password', ['error' => 'New password must be different from the old password']);
+        }
 
-    $user->password = bcrypt($request->input('new_password'));
-    $user->required_change = false;
-    $user->password_changed_date = now();
-    $user->save();
+        $user->password = bcrypt($request->input('new_password'));
+        $user->required_change = false;
+        $user->password_changed_date = now();
+        $user->save();
 
-    return $this->sendResponse(null, 'Password changed successfully.');
+        return $this->sendResponse(null, 'Password changed successfully.');
     }
 
     public function logout(Request $request): JsonResponse

@@ -154,7 +154,6 @@ export default function AdminDashboard() {
       handleGetPendingUsers();
     });
 
-    // Fetch pending users on initial render
     handleGetPendingUsers();
   }, []);
 
