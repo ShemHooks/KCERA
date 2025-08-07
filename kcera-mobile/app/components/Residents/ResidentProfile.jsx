@@ -1,15 +1,28 @@
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
 const ResidentProfile = () => {
+  const logOut = () => {};
   return (
-    <SafeAreaView>
+    <View>
       <View>
-        <Text>This is Profile Setting</Text>
+        <TouchableOpacity style={styles.logoutButton}>
+          <Text className="text-xl font-bold text-red-500">LOGOUT</Text>
+        </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
 export default ResidentProfile;
+
+const styles = StyleSheet.create({
+  logoutButton: {
+    backgroundColor: "#fff",
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 5,
+  },
+});

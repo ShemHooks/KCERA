@@ -1,6 +1,7 @@
 import { router } from "expo-router";
 import ROUTES from "../../constant/routes";
 import getApiClient from "../axios";
+import socket from "../utility/socket";
 
 const RegistrationApi = async (formData) => {
   try {
@@ -40,7 +41,7 @@ const RegistrationApi = async (formData) => {
     if (!response.status === 200) {
       return { true: false };
     }
-
+    socket.emit("register");
     router.replace(ROUTES.RESIDENTS.PENDING_USER);
   } catch (error) {
     if (error.response) {

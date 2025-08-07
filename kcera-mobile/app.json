@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "alert0-mobile",
+    "name": "KCERA",
     "slug": "alert0-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/app-images/KCERA.png",
     "scheme": "alert0mobile",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -17,7 +17,12 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.shemhooks.KCERA"
+      "package": "com.shemhooks.KCERA",
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
     },
     "web": {
       "bundler": "metro",

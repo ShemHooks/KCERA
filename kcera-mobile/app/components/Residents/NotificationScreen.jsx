@@ -4,11 +4,11 @@ import { View, Text } from "react-native";
 
 const NotificationScreen = () => {
   return (
-    <SafeAreaView>
+    <View>
       <View>
         <Text>This is Notification Screen</Text>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
