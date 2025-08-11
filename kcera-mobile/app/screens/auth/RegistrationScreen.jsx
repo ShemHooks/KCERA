@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+  StyleSheet,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import RegistrationApi from "../../api/authApi/RegistrationApi";
 import Camera from "../../components/Registration/Camera";
@@ -19,10 +26,9 @@ const Stepper = ({ steps, onSubmit }) => {
   };
 
   return (
-    <SafeAreaView className="p-5">
+    <SafeAreaView>
+      <TermCondition />
       <ScrollView showsVerticalScrollIndicator={false}>
-        <TermCondition />
-
         <View className="flex items-center w-full">
           <Image
             source={require("../../../assets/app-images/KCERA.png")}
@@ -52,7 +58,7 @@ const Stepper = ({ steps, onSubmit }) => {
         </View>
 
         {/* Step Content */}
-        <View className="mb-5">
+        <View className="p-2 mb-5">
           <Text className="text-xl font-bold ">{steps[currentStep].title}</Text>
           <View className="text-base">{steps[currentStep].content}</View>
         </View>

@@ -6,7 +6,9 @@ const NotificationScreen = () => {
   return (
     <View>
       <View>
-        <Text>This is Notification Screen</Text>
+        <Text className="text-xl font-bold text-center ">
+          There is no notification to display
+        </Text>
       </View>
     </View>
   );

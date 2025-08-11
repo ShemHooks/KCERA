@@ -97,4 +97,15 @@ class UserManagementController extends BaseController
 
         return $this->sendResponse([], 'User rejected successfully');
     }
+
+    public function getUserInformation(Request $request): JsonResponse
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return $this->sendError([], 'Cannot find user data');
+        }
+
+        return $this->sendResponse($user, 'User Data Retrieved Successfully');
+    }
 }

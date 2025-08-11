@@ -1,4 +1,3 @@
-import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, Image, ScrollView, StyleSheet } from "react-native";
 
 const group_picture = require("../../../assets/app-images/dev-team/grouppic.jpg");

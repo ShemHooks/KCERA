@@ -6,12 +6,14 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
+  Modal,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import { useEffect, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
+import SendRequestApi from "../../api/residents/SendRequestApi";
 
 const fire = require("../../../assets/app-images/Emergency/fire.png");
 const flood = require("../../../assets/app-images/Emergency/flood.jpg");
@@ -20,13 +22,19 @@ const medical = require("../../../assets/app-images/Emergency/medical.jpg");
 const traffic = require("../../../assets/app-images/Emergency/traffic.jpg");
 
 const logo = require("../../../assets/app-images/KCERA.png");
-const pageTitle = "About KCERA";
+const pageTitle = "Emergecny Reporting";
 
 const ReportEmergency = () => {
   const [userLocation, setUserLocation] = useState(null);
   const [pinnedLocation, setPinnedLocation] = useState(null);
   const [image, setImage] = useState(null);
+  const [displayImage, setDisplayImage] = useState(null);
+
   const [emergencyType, setEmergencyType] = useState(null);
+
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [message, setMessage] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     getLocation();
@@ -72,8 +80,66 @@ const ReportEmergency = () => {
     });
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      const asset = result.assets[0];
+
+      const mimeType =
+        asset.type === "image"
+          ? "image/jpeg"
+          : asset.type === "video"
+          ? "video/mp4"
+          : asset.type;
+
+      console.log("Mime Type: ", mimeType);
+
+      setImage({
+        uri: asset.uri,
+        type: mimeType,
+        name: asset.fileName || "photo.jpg",
+      });
+      setDisplayImage(asset.uri);
     }
+  };
+
+  const submitRequest = async () => {
+    try {
+      const response = await SendRequestApi(
+        pinnedLocation,
+        emergencyType,
+        image
+      );
+      const result = response.success;
+
+      if (result?.status === 200) {
+        setMessage("Request submitted successfully! Thank You");
+        setIsSuccess(true);
+        setModalVisible(true);
+      } else if (result?.status === 409) {
+        setMessage(
+          "Similar Emergency has been reported already. Response is on its way. Thank You!"
+        );
+        setIsSuccess(true);
+        setModalVisible(true);
+      } else {
+        setMessage("Failed to submit request.");
+        setIsSuccess(true);
+      }
+    } catch (error) {
+      setIsSuccess(false);
+      alert("An error occurred while submitting.");
+    }
+  };
+
+  const clickOK = () => {
+    setModalVisible(false);
+    resetForm();
+  };
+
+  const resetForm = () => {
+    setEmergencyType(null);
+    setImage(null);
+    setDisplayImage(null);
+    setPinnedLocation(null);
+    setIsSuccess(false);
   };
 
   return (
@@ -207,9 +273,12 @@ const ReportEmergency = () => {
             </TouchableOpacity>
           </View>
           <View>
-            {typeof image === "string" && image !== "" && (
+            {typeof displayImage === "string" && displayImage !== "" && (
               <View style={styles.imageView}>
-                <Image source={{ uri: image }} style={styles.cameraPhoto} />
+                <Image
+                  source={{ uri: displayImage }}
+                  style={styles.cameraPhoto}
+                />
               </View>
             )}
 
@@ -220,11 +289,35 @@ const ReportEmergency = () => {
           </View>
           {emergencyType && image && pinnedLocation ? (
             <View>
-              <TouchableOpacity style={styles.submitButton}>
+              <TouchableOpacity
+                style={styles.submitButton}
+                onPress={submitRequest}
+              >
                 <Text className="font-bold">Submit</Text>
               </TouchableOpacity>
             </View>
           ) : null}
+
+          {isSuccess && (
+            <Modal
+              animationType="fade"
+              transparent={true}
+              visible={modalVisible}
+              onRequestClose={() => setModalVisible(false)}
+            >
+              <View style={styles.modalOverlay}>
+                <View style={styles.modalContainer}>
+                  <Text style={styles.modalText}>{message}</Text>
+                  <TouchableOpacity
+                    style={styles.modalButton}
+                    onPress={clickOK}
+                  >
+                    <Text style={styles.modalButtonText}>OK</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </Modal>
+          )}
         </View>
       </ScrollView>
     </View>
@@ -344,5 +437,34 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     gap: 8,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContainer: {
+    backgroundColor: "#fff",
+    padding: 24,
+    borderRadius: 12,
+    width: "80%",
+    alignItems: "center",
+    elevation: 10,
+  },
+  modalText: {
+    fontSize: 18,
+    marginBottom: 16,
+    textAlign: "center",
+  },
+  modalButton: {
+    backgroundColor: "#007BFF",
+    paddingVertical: 10,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+  },
+  modalButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
   },
 });

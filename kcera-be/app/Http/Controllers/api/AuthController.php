@@ -153,7 +153,16 @@ class AuthController extends BaseController
 
     public function logout(Request $request): JsonResponse
     {
-        $request->user()->currentAccessToken()->delete();
+        $user = $request->user();
+
+        if (!$user) {
+            return $this->sendError("Unauthenticated.", 401);
+        }
+
+        $user->status = 'inactive';
+        $user->save();
+
+        $user->currentAccessToken()->delete();
 
         return $this->sendResponse(null, "User logged out successfully");
     }

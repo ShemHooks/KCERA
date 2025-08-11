@@ -4,20 +4,12 @@ import getApiClient from "../axios";
 import ROUTES from "./../../constant/routes";
 const LoginApi = async (email, password) => {
   try {
-    const ip = getApiClient();
+    const api = await getApiClient();
 
-    const response = await ip.post(
-      "auth/login",
-      {
-        email,
-        password,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await api.post("auth/login", {
+      email,
+      password,
+    });
 
     if (response.status !== 200) {
       console.log("Login error:", response.statusText);

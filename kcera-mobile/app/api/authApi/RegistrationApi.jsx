@@ -30,9 +30,9 @@ const RegistrationApi = async (formData) => {
       type: "image/jpeg",
     });
 
-    const ip = getApiClient();
+    const api = await getApiClient();
 
-    const response = await ip.post("auth/register", data, {
+    const response = await api.post("auth/register", data, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

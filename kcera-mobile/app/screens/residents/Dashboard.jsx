@@ -10,7 +10,7 @@ import { lazy, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 
 // Lazy imports
-const HomeScreen = lazy(() => import("../../components/Residents/HomeScreen"));
+const HomeScreen = lazy(() => import("../../components/Residents/MapPage"));
 const NotificationScreen = lazy(() =>
   import("../../components/Residents/NotificationScreen")
 );
@@ -35,13 +35,13 @@ const Dashboard = () => {
       case "Settings":
         return <ProfileSetting />;
       default:
-        return <HomeScreen />;
+        return <ReportEmergency />;
     }
   };
 
   const tabs = [
     { name: "Home", icon: "home-outline", label: "Home" },
-    { name: "Report", icon: "reader-outline", label: "About" },
+    { name: "Report", icon: "refresh-outline", label: "Recent Reports" },
     {
       name: "Notification",
       icon: "notifications-outline",
