@@ -3,6 +3,7 @@ import * as SecureStore from "expo-secure-store";
 import { useEffect } from "react";
 import { router } from "expo-router";
 import { ActivityIndicator, View } from "react-native";
+import "../app/api/utility/socket";
 
 export default function Index() {
   useEffect(() => {

@@ -20,8 +20,11 @@ if (!hostUri) {
 const ip = hostUri.split(":")[0];
 const baseURL = `http://${ip}:8080`;
 
+console.log("socket base url", baseURL);
+
 const socket = io(baseURL, {
   transports: ["websocket"],
+  forceNew: true,
 });
 
 export default socket;

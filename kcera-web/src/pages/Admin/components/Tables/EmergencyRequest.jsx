@@ -4,6 +4,7 @@ import { useState } from "react";
 import L from "leaflet";
 import RequestDetails from "./RequestDetails";
 import { GetDocTitle } from "./../../../../utils/hooks/useDocumentTitle";
+import { stopAlarm } from "../../../../utils/alarmAudio";
 
 const EmergencyRequests = ({ emergency }) => {
   const locationMarkLat = emergency.map((item) => item.latitude);
@@ -11,6 +12,8 @@ const EmergencyRequests = ({ emergency }) => {
 
   const [isSatellite, setIsSatellite] = useState(false);
   const [selectedEmergeny, setSelectedEmergency] = useState(null);
+
+  console.log("selected emergencies", selectedEmergeny);
 
   const satelliteURL =
     "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
@@ -52,6 +55,7 @@ const EmergencyRequests = ({ emergency }) => {
               eventHandlers={{
                 click: () => {
                   setSelectedEmergency(item);
+                  stopAlarm();
                 },
               }}
             />

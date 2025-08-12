@@ -3,9 +3,8 @@ import axiosPrivateInstance from "./../../../utils/API/PrivateAxios";
 import { io } from "socket.io-client";
 
 const ApproveUserApi = async (id, handleGetPendingUsers) => {
-  const socket = io("http://127.0.0.1:8080");
-
   try {
+    const socket = await io("http://127.0.0.1:8080");
     const response = await axiosPrivateInstance.post(
       `api/user/admin.only/approve/${id}`
     );

@@ -5,6 +5,11 @@
 
     RewriteEngine On
 
+     # Allow access to storage files
+    RewriteCond %{REQUEST_URI} ^/storage/
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]

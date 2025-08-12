@@ -12,6 +12,67 @@ use Illuminate\Support\Carbon;
 
 class EmergencyRequestController extends BaseController
 {
+
+    public function index(Request $request)
+    {
+        $query = EmergencyReport::with('user');
+
+
+        if ($request->filled('status')) {
+            $query->where('request_status', $request->status);
+        }
+
+        if ($request->filled('request_type')) {
+            $query->where('request_type', $request->request_type);
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        if ($request->filled('reporter_id')) {
+            $query->where('reporter_id', $request->reporter_id);
+        }
+
+        if ($request->filled('responder_id')) {
+            $query->where('responder_id', $request->responder_id);
+        }
+
+        if (
+            $request->filled('lat_min') &&
+            $request->filled('lat_max') &&
+            $request->filled('lng_min') &&
+            $request->filled('lng_max')
+        ) {
+            $query->whereBetween('latitude', [$request->lat_min, $request->lat_max])
+                ->whereBetween('longitude', [$request->lng_min, $request->lng_max]);
+        }
+
+        $sortBy = $request->get('sort_by', 'created_at');
+        $sortOrder = $request->get('sort_order', 'desc');
+
+        $allowedSortFields = ['created_at', 'updated_at', 'priority_level', 'status'];
+        if (!in_array($sortBy, $allowedSortFields)) {
+            $sortBy = 'created_at';
+        }
+
+        if (!in_array(strtolower($sortOrder), ['asc', 'desc'])) {
+            $sortOrder = 'desc';
+        }
+
+        $query->orderBy($sortBy, $sortOrder);
+
+
+        $results = $query->get();
+
+        return $this->sendResponse($results, 'Emergency Reports');
+    }
+
+
     public function submitRequest(Request $request): JsonResponse
     {
 
@@ -61,7 +122,7 @@ class EmergencyRequestController extends BaseController
             'request_date' => now(),
             'latitude' => $lat,
             'longitude' => $lng,
-            'request_photo' => $filePath,
+            'request_photo' => $publicUrl,
         ]);
 
         if (!$emergencyReport) {

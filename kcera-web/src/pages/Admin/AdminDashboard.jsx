@@ -4,6 +4,7 @@ import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { DemoTheme } from "../../utils/Theme";
 import { lazy, Suspense } from "react";
 import Loader from "../../utils/loader";
+import { playAlarm } from "../../utils/alarmAudio";
 
 //API
 import GetPendingUserApi from "./API/GetPendingUserApi";
@@ -11,6 +12,7 @@ import GetResidentsApi from "./API/GetResidentsApi";
 import GetRespondersApi from "./API/GetRespondersApi";
 import GetDriversApi from "./API/GetDriversApi";
 import ApproveUserApi from "./API/ApproveUserApi";
+import GetEmergencyApi from "./API/GetEmergencyApi";
 //navigation
 import { NAVIGATION } from "./components/ContentNavigation";
 
@@ -217,21 +219,21 @@ export default function AdminDashboard() {
 
   // handle sa pag kwa sang emergencies
   const [EmergencyReq, SetEmergency] = React.useState([]);
-  // console.log(Emergency)
 
   React.useEffect(() => {
     socket.on("emergencyRequests", () => {
+      playAlarm();
       handdleGetEmergency();
     });
     handdleGetEmergency();
   }, []);
 
   const handdleGetEmergency = async () => {
-    const emergencies = await GetEmergencyRequest();
+    const emergencies = await GetEmergencyApi();
 
-    if (emergencies.emergency) {
-      SetEmergency(emergencies.emergency);
-    }
+    SetEmergency(emergencies.emergencies.data);
+
+    console.log("emergencies", EmergencyReq);
   };
 
   // reports naman ni

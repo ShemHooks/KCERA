@@ -7,11 +7,11 @@ const RequestDetails = ({ details, onClose }) => {
   console.log("request details", details);
   const [isLoading, setIsLoading] = useState(false);
 
-  const reporterName = details.requester.name;
-  const reporterGender = details.requester.gender;
-  const reporterPhoneNumber = details.requester.phone;
-  const reporterEmail = details.requester.email;
-  const reporterAddress = details.requester.address;
+  const reporterName = details.user.name;
+  const reporterGender = details.user.gender;
+  const reporterPhoneNumber = details.user.phone;
+  const reporterEmail = details.user.email;
+  const reporterAddress = details.user.address;
 
   const reportId = details.id;
   const reportedIncident = details.request_type;
@@ -62,15 +62,15 @@ const RequestDetails = ({ details, onClose }) => {
     <div>
       <div className="flex justify-end pr-10 mt-6">
         <button onClick={onClose} className="cursor-pointer">
-          <FaTimes className="text-white hover:text-red-500  w-6 h-6  rounded-2xl" />
+          <FaTimes className="w-6 h-6 text-white hover:text-red-500 rounded-2xl" />
         </button>
       </div>
-      <h1 className="text-center font-bold">VERIFY REQUEST</h1>
+      <h1 className="font-bold text-center">VERIFY REQUEST</h1>
       <br />
       <br />
-      <div className="pl-10 flex flex-col gap-4">
+      <div className="flex flex-col gap-4 pl-10">
         <h1 className="font-bold">Reporter Details</h1>
-        <div className="pl-6 flex flex-col gap-4">
+        <div className="flex flex-col gap-4 pl-6">
           <div className="flex gap-2">
             Name: <h1>{reporterName}</h1>
           </div>
@@ -89,7 +89,7 @@ const RequestDetails = ({ details, onClose }) => {
         </div>
 
         <h1>Request Details</h1>
-        <div className="pl-6 flex flex-col gap-4">
+        <div className="flex flex-col gap-4 pl-6">
           <div className="flex gap-2">
             Date & Time: <h1>{formattedReportDateTime}</h1>
           </div>
@@ -105,15 +105,15 @@ const RequestDetails = ({ details, onClose }) => {
                 className="rounded"
               />
             </div>
-            <div className="flex gap-10 justify-end pr-10 mt-10 mb-10">
+            <div className="flex justify-end gap-10 pr-10 mt-10 mb-10">
               <button
-                className="border rounded p-2 cursor-pointer w-20 h-10 transform hover:scale-110 transition-transform duration-300"
+                className="w-20 h-10 p-2 transition-transform duration-300 transform border border-red-500 rounded cursor-pointer hover:scale-110"
                 onClick={rejectRequest}
               >
                 {isLoading ? "Rejecting" : "Reject"}
               </button>
               <button
-                className="border  rounded p-2 cursor-pointer w-20 h-10 transform hover:scale-110 transition-transform duration-300"
+                className="w-20 h-10 p-2 transition-transform duration-300 transform border border-blue-500 rounded cursor-pointer hover:scale-110"
                 onClick={VerifyRequest}
               >
                 {isLoading ? "Verifying" : "Verify"}

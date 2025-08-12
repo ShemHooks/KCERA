@@ -1,11 +1,20 @@
-import React from 'react';
+import React from "react";
 import {
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
-} from '@mui/material';
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from "@mui/material";
+import { GetDocTitle } from "./../../../../utils/hooks/useDocumentTitle";
 
 const ReportsTable = ({ data }) => {
   return (
     <TableContainer component={Paper}>
+      <GetDocTitle title="KCERA: Patient Care Report" />
+
       <Table>
         <TableHead>
           <TableRow>
@@ -24,8 +33,8 @@ const ReportsTable = ({ data }) => {
         </TableHead>
         <TableBody>
           {data.map((item) => {
-            const patient = JSON.parse(item.patient_information || '{}');
-            const vitals = JSON.parse(item.vital_signs || '{}');
+            const patient = JSON.parse(item.patient_information || "{}");
+            const vitals = JSON.parse(item.vital_signs || "{}");
 
             return (
               <TableRow key={item.id}>
@@ -33,13 +42,15 @@ const ReportsTable = ({ data }) => {
                 <TableCell>{patient.sex}</TableCell>
                 <TableCell>{item.address}</TableCell>
                 <TableCell>{item.triage}</TableCell>
-                <TableCell>{item.chief_complaint || 'N/A'}</TableCell>
+                <TableCell>{item.chief_complaint || "N/A"}</TableCell>
                 <TableCell>{item.care_onprogress_upon_arrival}</TableCell>
                 <TableCell>{vitals.bp}</TableCell>
                 <TableCell>{vitals.pr}</TableCell>
                 <TableCell>{vitals.rr}</TableCell>
                 <TableCell>{vitals.temp}</TableCell>
-                <TableCell>{new Date(item.created_at).toLocaleString()}</TableCell>
+                <TableCell>
+                  {new Date(item.created_at).toLocaleString()}
+                </TableCell>
               </TableRow>
             );
           })}

@@ -7,8 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class EmergencyReport extends Model
 {
     protected $fillable = [
-        'user_id', 'request_type', 'request_status', 'request_date',
-        'latitude', 'longitude', 'request_photo'
+        'user_id',
+        'request_type',
+        'request_status',
+        'request_date',
+        'latitude',
+        'longitude',
+        'request_photo'
     ];
 
     protected $casts = [
@@ -19,7 +24,7 @@ class EmergencyReport extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function response()

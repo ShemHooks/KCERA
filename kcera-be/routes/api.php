@@ -36,5 +36,6 @@ Route::middleware(['auth:sanctum'])->prefix('user')->group(function () {
 Route::controller(EmergencyRequestController::class)->prefix('emergency')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('submit', 'submitRequest');
+        Route::get('retrieve', 'index');
     });
 });
