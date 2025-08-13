@@ -66,8 +66,12 @@ class EmergencyRequestController extends BaseController
 
         $query->orderBy($sortBy, $sortOrder);
 
-
         $results = $query->get();
+
+        $results->transform(function ($item) {
+            $item->emergency_photo = 'http://localhost:8000/storage/' . $item->request_photo;
+            return $item;
+        });
 
         return $this->sendResponse($results, 'Emergency Reports');
     }
@@ -103,6 +107,7 @@ class EmergencyRequestController extends BaseController
             )
         ) AS distance", [$lat, $lng, $lat])
             ->where('request_status', 'pending')
+            ->orWhere('request_status', 'verified')
             ->where('created_at', '>=', Carbon::now()->subMinutes(30))
             ->having("distance", "<=", 0.05)
             ->first();
@@ -122,7 +127,7 @@ class EmergencyRequestController extends BaseController
             'request_date' => now(),
             'latitude' => $lat,
             'longitude' => $lng,
-            'request_photo' => $publicUrl,
+            'request_photo' => $filePath,
         ]);
 
         if (!$emergencyReport) {
@@ -132,5 +137,36 @@ class EmergencyRequestController extends BaseController
 
         return $this->sendResponse(['photo_url' => $publicUrl], 'Emergency request submitted successfully.');
     }
+
+    public function verifyEmergency(string $id): JsonResponse
+    {
+        $emergencyRecord = EmergencyReport::find($id);
+
+        if (!$emergencyRecord) {
+            return $this->sendError('Cannot find emergency', []);
+        }
+
+        $emergencyRecord->request_status = 'verified';
+
+        $emergencyRecord->save();
+
+        return $this->sendResponse([], 'Verified Successfully');
+    }
+
+    public function rejectEmergency(string $id): JsonResponse
+    {
+        $emergencyRecord = EmergencyReport::find($id);
+
+        if (!$emergencyRecord) {
+            return $this->sendError('Cannot find emergency', []);
+        }
+
+        $emergencyRecord->request_status = 'rejected';
+
+        $emergencyRecord->save();
+
+        return $this->sendResponse([], 'Rejected Successfully');
+    }
+
 
 }

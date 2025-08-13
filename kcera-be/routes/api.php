@@ -34,8 +34,14 @@ Route::middleware(['auth:sanctum'])->prefix('user')->group(function () {
 });
 
 Route::controller(EmergencyRequestController::class)->prefix('emergency')->group(function () {
+
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('submit', 'submitRequest');
         Route::get('retrieve', 'index');
+
+        Route::middleware('admin.only')->prefix('admin.only')->group(function () {
+            Route::post('verify/{id}', 'verifyEmergency');
+            Route::post('reject/{id}', 'rejectEmergency');
+        });
     });
 });

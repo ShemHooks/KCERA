@@ -3,11 +3,12 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
-  Platform,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { lazy, useState } from "react";
+import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
+import { lazy, Suspense } from "react";
 
 // Lazy imports
 const HomeScreen = lazy(() => import("../../components/Residents/MapPage"));
@@ -21,6 +22,12 @@ const ReportEmergency = lazy(() =>
   import("../../components/Residents/ReportEmergency")
 );
 
+const Loading = () => (
+  <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+    <ActivityIndicator size="large" color="#e65100" />
+  </View>
+);
+
 const Dashboard = () => {
   const [screen, setScreen] = useState("Home");
 
@@ -28,7 +35,7 @@ const Dashboard = () => {
     switch (screen) {
       case "Home":
         return <ReportEmergency />;
-      case "Report":
+      case "Weather":
         return <HomeScreen />;
       case "Notification":
         return <NotificationScreen />;
@@ -41,7 +48,7 @@ const Dashboard = () => {
 
   const tabs = [
     { name: "Home", icon: "home-outline", label: "Home" },
-    { name: "Report", icon: "refresh-outline", label: "Recent Reports" },
+    { name: "Weather", icon: "partly-sunny-outline", label: "Weather" },
     {
       name: "Notification",
       icon: "notifications-outline",
@@ -51,34 +58,36 @@ const Dashboard = () => {
   ];
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.content}>{renderScreen()}</View>
+    <Suspense fallback={<Loading />}>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.content}>{renderScreen()}</View>
 
-      <View style={styles.navBar}>
-        {tabs.map((tab, index) => {
-          const isActive = screen === tab.name;
-          return (
-            <TouchableOpacity
-              key={tab.name}
-              onPress={() => setScreen(tab.name)}
-              style={styles.tabContainer}
-              activeOpacity={0.8}
-            >
-              {isActive ? (
-                <View style={styles.activeIconWrapper}>
-                  <Ionicons name={tab.icon} size={26} color="#e65100" />
-                </View>
-              ) : (
-                <>
-                  <Ionicons name={tab.icon} size={24} color="#333" />
-                  <Text style={styles.tabLabel}>{tab.label}</Text>
-                </>
-              )}
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-    </SafeAreaView>
+        <View style={styles.navBar}>
+          {tabs.map((tab, index) => {
+            const isActive = screen === tab.name;
+            return (
+              <TouchableOpacity
+                key={tab.name}
+                onPress={() => setScreen(tab.name)}
+                style={styles.tabContainer}
+                activeOpacity={0.8}
+              >
+                {isActive ? (
+                  <View style={styles.activeIconWrapper}>
+                    <Ionicons name={tab.icon} size={26} color="#e65100" />
+                  </View>
+                ) : (
+                  <>
+                    <Ionicons name={tab.icon} size={24} color="#333" />
+                    <Text style={styles.tabLabel}>{tab.label}</Text>
+                  </>
+                )}
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </SafeAreaView>
+    </Suspense>
   );
 };
 

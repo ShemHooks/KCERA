@@ -10,7 +10,7 @@ const ApproveUserApi = async (id, handleGetPendingUsers) => {
     );
 
     socket.emit("updateResidents");
-    handleGetPendingUsers();
+    socket.emit("register");
     return response.data;
   } catch (error) {
     console.log("Error approving user:", error);

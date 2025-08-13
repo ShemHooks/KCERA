@@ -5,8 +5,10 @@ import { DemoTheme } from "../../utils/Theme";
 import { lazy, Suspense } from "react";
 import Loader from "../../utils/loader";
 import { playAlarm } from "../../utils/alarmAudio";
+import { stopAlarm } from "../../utils/alarmAudio";
 
 //API
+import socket from "../../utils/API/socket";
 import GetPendingUserApi from "./API/GetPendingUserApi";
 import GetResidentsApi from "./API/GetResidentsApi";
 import GetRespondersApi from "./API/GetRespondersApi";
@@ -44,8 +46,6 @@ const AdminAccountSetting = lazy(
   () => import("./components/AdminAccountSetting")
 );
 
-// socket
-import { io } from "socket.io-client";
 // import { Emergency } from "@mui/icons-material";
 
 function useDemoRouter(initialPath) {
@@ -149,7 +149,7 @@ export default function AdminDashboard() {
   // handle sang pag kwa sang list sang mga pending users
   const [pendingUsers, setPendingUsers] = React.useState([]);
 
-  const socket = io("http://127.0.0.1:8080");
+  // const socket = io("http://127.0.0.1:8080");
 
   React.useEffect(() => {
     socket.on("PendingUser", () => {
@@ -222,18 +222,33 @@ export default function AdminDashboard() {
 
   React.useEffect(() => {
     socket.on("emergencyRequests", () => {
-      playAlarm();
       handdleGetEmergency();
     });
+
     handdleGetEmergency();
+
+    return () => {
+      socket.off("emergencyRequests");
+    };
   }, []);
+
+  const prevLength = React.useRef(0);
 
   const handdleGetEmergency = async () => {
     const emergencies = await GetEmergencyApi();
+    const emergencyData = emergencies.emergencies.data;
 
-    SetEmergency(emergencies.emergencies.data);
+    if (emergencyData.length > prevLength.current) {
+      playAlarm();
+    }
 
-    console.log("emergencies", EmergencyReq);
+    if (emergencyData.length === 0) {
+      stopAlarm();
+    }
+
+    prevLength.current = emergencyData.length;
+
+    SetEmergency(emergencyData);
   };
 
   // reports naman ni

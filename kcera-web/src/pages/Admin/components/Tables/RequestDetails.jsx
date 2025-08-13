@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import RejectReport from "../../../../../unneeded/services/RejectReport";
-import VerifyReport from "../../../../../unneeded/services/VerifyReport";
-
+import VerifyEmergencyApi from "../../API/VerifyEmergencyApi";
 const RequestDetails = ({ details, onClose }) => {
   console.log("request details", details);
   const [isLoading, setIsLoading] = useState(false);
@@ -15,7 +14,7 @@ const RequestDetails = ({ details, onClose }) => {
 
   const reportId = details.id;
   const reportedIncident = details.request_type;
-  const reportPhoto = details.request_photo;
+  const reportPhoto = details.emergency_photo;
   const rawReportDateTime = details.request_date;
   const formattedReportDateTime = new Date(rawReportDateTime).toLocaleString(
     "en-US",
@@ -48,9 +47,12 @@ const RequestDetails = ({ details, onClose }) => {
   const VerifyRequest = async () => {
     setIsLoading(true);
     try {
-      await VerifyReport(reportId);
-      alert("Successfully Verified Report");
+      const res = await VerifyEmergencyApi(reportId);
+      if (res.response) {
+        alert("Request Verified");
+      }
       onClose();
+      return;
     } catch (err) {
       alert("Failed to verify the report. Please try again.");
     } finally {

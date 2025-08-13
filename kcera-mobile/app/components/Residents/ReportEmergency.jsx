@@ -7,6 +7,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Modal,
+  ActivityIndicator,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
@@ -35,6 +36,7 @@ const ReportEmergency = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [message, setMessage] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     getLocation();
@@ -101,6 +103,7 @@ const ReportEmergency = () => {
   };
 
   const submitRequest = async () => {
+    setIsLoading(true);
     try {
       const response = await SendRequestApi(
         pinnedLocation,
@@ -112,19 +115,23 @@ const ReportEmergency = () => {
       if (result?.status === 200) {
         setMessage("Request submitted successfully! Thank You");
         setIsSuccess(true);
+        setIsLoading(false);
         setModalVisible(true);
       } else if (result?.status === 409) {
         setMessage(
           "Similar Emergency has been reported already. Response is on its way. Thank You!"
         );
         setIsSuccess(true);
+        setIsLoading(false);
         setModalVisible(true);
       } else {
         setMessage("Failed to submit request.");
         setIsSuccess(true);
+        setIsLoading(false);
       }
     } catch (error) {
       setIsSuccess(false);
+      setIsLoading(false);
       alert("An error occurred while submitting.");
     }
   };
@@ -144,6 +151,14 @@ const ReportEmergency = () => {
 
   return (
     <View className="w-full h-full">
+      {isLoading && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large" color="#fff" />
+          <Text style={{ color: "#fff", marginTop: 10 }}>
+            Submitting Request...
+          </Text>
+        </View>
+      )}
       <ScrollView contentContainerStyle={styles.container}>
         <View className="flex items-center ">
           <Image source={logo} style={styles.logo} />
@@ -466,5 +481,16 @@ const styles = StyleSheet.create({
   modalButtonText: {
     color: "#fff",
     fontWeight: "bold",
+  },
+  loadingOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 999,
   },
 });
