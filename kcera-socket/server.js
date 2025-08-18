@@ -43,6 +43,10 @@ io.on("connection", (socket) => {
     io.emit("ReadPatientCareReport");
   });
 
+  socket.on("EmergencyVerified", (data) => {
+    io.emit("CheckVerifiedEmergency");
+  });
+
   socket.on("respond", () => {
     console.log("Received respond event from client");
 

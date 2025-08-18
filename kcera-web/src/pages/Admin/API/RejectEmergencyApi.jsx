@@ -1,13 +1,13 @@
-import axiosPrivateInstance from "./../../../utils/API/PrivateAxios";
+import axiosPrivateInstance from "../../../utils/API/PrivateAxios";
 import socket from "../../../utils/API/socket";
 
-const VerifyEmergencyApi = async (id) => {
+const RejectEmergencyApi = async (id) => {
+  console.log("click", id);
   try {
     const response = await axiosPrivateInstance.post(
-      `api/emergency/admin.only/verify/${id}`
+      `api/emergency/admin.only/reject/${id}`
     );
     socket.emit("emergencyRequest");
-    socket.emit("EmergencyVerified");
     return {
       response: response,
     };
@@ -16,4 +16,4 @@ const VerifyEmergencyApi = async (id) => {
   }
 };
 
-export default VerifyEmergencyApi;
+export default RejectEmergencyApi;

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaTimes } from "react-icons/fa";
-import RejectReport from "../../../../../unneeded/services/RejectReport";
 import VerifyEmergencyApi from "../../API/VerifyEmergencyApi";
+import RejectEmergencyApi from "../../API/RejectEmergencyApi";
 const RequestDetails = ({ details, onClose }) => {
   console.log("request details", details);
   const [isLoading, setIsLoading] = useState(false);
@@ -32,10 +32,12 @@ const RequestDetails = ({ details, onClose }) => {
   const rejectRequest = async () => {
     setIsLoading(true);
     try {
-      await RejectReport(reportId);
-
-      alert("Successfully Reject Report");
+      const res = await RejectEmergencyApi(reportId);
+      if (res.response) {
+        alert("Successfully Reject Report");
+      }
       onClose();
+      return;
     } catch (err) {
       console.log(err);
       alert("Failed to reject the report. Please try again.");

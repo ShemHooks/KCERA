@@ -15,6 +15,10 @@ export default function Index() {
           router.replace(
             ROUTES.RESIDENTS.DASHBOARD as "/screens/residents/Dashboard"
           );
+        } else if (user_role === "driver") {
+          router.replace(
+            ROUTES.DRIVER.DASHBOARD as "/screens/drivers/Dashboard"
+          );
         } else {
           router.replace(ROUTES.AUTH.LOGIN as "/screens/auth/HomeScreen");
         }

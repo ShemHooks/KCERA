@@ -27,6 +27,8 @@ const LoginApi = async (email, password) => {
       await SecureStore.setItemAsync("userRole", user_role);
       if (user_role === "residents") {
         router.replace(ROUTES.RESIDENTS.DASHBOARD);
+      } else if (user_role === "driver") {
+        router.replace(ROUTES.DRIVER.DASHBOARD);
       }
     }
   } catch (error) {

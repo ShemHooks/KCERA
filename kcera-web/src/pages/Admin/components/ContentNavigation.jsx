@@ -9,8 +9,9 @@ import {
   DirectionsCar,
 } from "@mui/icons-material";
 import BarChartIcon from "@mui/icons-material/BarChart";
-import ListAltIcon from "@mui/icons-material/ListAlt";
+// import ListAltIcon from "@mui/icons-material/ListAlt";
 import HistoryIcon from "@mui/icons-material/History";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 export const NAVIGATION = [
   {
     kind: "header",
@@ -61,10 +62,15 @@ export const NAVIGATION = [
     kind: "header",
     title: "Analytics",
   },
+  // {
+  //   segment: "reports",
+  //   title: "Patient Care Reports",
+  //   icon: <ListAltIcon />,
+  // },
   {
-    segment: "reports",
-    title: "Patient Care Reports",
-    icon: <ListAltIcon />,
+    segment: "ongoing",
+    title: "On-going Responses",
+    icon: <AccessTimeIcon />,
   },
   {
     segment: "history",
