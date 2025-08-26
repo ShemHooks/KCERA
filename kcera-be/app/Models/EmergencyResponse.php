@@ -7,13 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 class EmergencyResponse extends Model
 {
     protected $fillable = [
-        'request_id', 'driver_id', 'current_latitude',
-        'current_longitude', 'request_status'
+        'request_id',
+        'driver_id',
+        'current_latitude',
+        'current_longitude',
+        'request_status'
     ];
 
     protected $casts = [
-            'current_latitude' => float,
-            'current_longitude' => float
+        'current_latitude' => 'float',
+        'current_longitude' => 'float'
     ];
 
     public function report()

@@ -1,20 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Image, TouchableOpacity, Text } from "react-native";
-import MapView, { Marker, Callout } from "react-native-maps";
+import { View, StyleSheet } from "react-native";
+import MapView, { Marker, Polyline } from "react-native-maps";
 import * as Location from "expo-location";
 import GetEmergencyApi from "../../api/drivers/GetEmergencyApi";
 import socket from "../../api/utility/socket";
+import RespondToEmergencyApi from "../../api/drivers/RespondToEmergencyApi";
 
-const fireIcon = require("../../../assets/app-images/markers/flame.png");
-const trafficIcon = require("../../../assets/app-images/markers/traffic.png");
-const medicalIcon = require("../../../assets/app-images/markers/medical.png");
-const floodIcon = require("../../../assets/app-images/markers/flood.png");
-const landslideIcon = require("../../../assets/app-images/markers/landslide.png");
+import WarningSignal from "./WarningSignal";
 
 const HomeScreen = () => {
   const [userLocation, setUserLocation] = useState(null);
   const [emergency, SetEmergency] = useState(null);
-  const [emergencyLocation, SetEmergencyLocation] = useState(null);
+  const [routeCoords, setRouteCoords] = useState([]); // route for selected emergency
 
   useEffect(() => {
     const listener = () => getEmergencies();
@@ -32,24 +29,8 @@ const HomeScreen = () => {
       const res = await GetEmergencyApi();
       const emergencyData = res?.data?.data;
 
-      if (Array.isArray(emergencyData)) {
-        console.log("array");
-      } else {
-        console.log("not array");
-      }
-
       if (emergencyData) {
-        console.log("true");
         SetEmergency(emergencyData);
-        const locations = emergencyData.map((e) => ({
-          latitude: e.latitude,
-          longitude: e.longitude,
-          type: e.request_type,
-        }));
-
-        console.log("location", locations);
-
-        SetEmergencyLocation(locations);
       }
     } catch (error) {
       console.log(error);
@@ -62,17 +43,50 @@ const HomeScreen = () => {
 
   const getLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
-
     if (status !== "granted") {
-      alert("permission denied");
+      alert("Permission denied");
       return;
     }
-
     let location = await Location.getCurrentPositionAsync({});
     setUserLocation(location);
   };
 
-  console.log("emergecny location", emergencyLocation);
+  const fetchRoute = async (start, end) => {
+    try {
+      const url = `https://router.project-osrm.org/route/v1/driving/${start.longitude},${start.latitude};${end.longitude},${end.latitude}?overview=full&geometries=geojson`;
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (data.routes?.length) {
+        const coords = data.routes[0].geometry.coordinates.map(
+          ([lon, lat]) => ({
+            latitude: lat,
+            longitude: lon,
+          })
+        );
+        setRouteCoords(coords);
+      }
+    } catch (error) {
+      console.error("Error fetching route:", error);
+    }
+  };
+
+  const RespondToEmergency = async (id, coords) => {
+    try {
+      await RespondToEmergencyApi(id, userLocation);
+
+      if (userLocation?.coords) {
+        const start = {
+          latitude: userLocation.coords.latitude,
+          longitude: userLocation.coords.longitude,
+        };
+        fetchRoute(start, coords); // fetch route from OSRM
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <View>
       <MapView
@@ -81,10 +95,11 @@ const HomeScreen = () => {
         initialRegion={{
           latitude: userLocation ? userLocation.coords.latitude : 10.0125,
           longitude: userLocation ? userLocation.coords.longitude : 122.8121,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
+          latitudeDelta: 0.05,
+          longitudeDelta: 0.05,
         }}
       >
+        {/* Driver location */}
         {userLocation?.coords && (
           <Marker
             coordinate={{
@@ -92,64 +107,37 @@ const HomeScreen = () => {
               longitude: userLocation.coords.longitude,
             }}
             title="My Location"
-            description="This is your current location"
           />
         )}
 
+        {/* Emergencies */}
         {emergency &&
-          emergency.map((e) => (
-            <Marker
-              key={e.id}
-              coordinate={{
-                latitude: parseFloat(e.latitude),
-                longitude: parseFloat(e.longitude),
-              }}
-              title={`Emergency: ${e.request_type}`}
-              description={`Reported by ${e.user?.name}`}
-            >
-              {e.request_type.toLowerCase() === "fire" ? (
-                <View style={styles.marker}>
-                  <Image
-                    source={fireIcon}
-                    style={styles.markerIcon}
-                    resizeMode="contain"
-                  />
-                </View>
-              ) : e.request_type.toLowerCase() === "traffic" ? (
-                <Image
-                  source={trafficIcon}
-                  style={styles.markerIcon}
-                  resizeMode="contain"
-                />
-              ) : e.request_type.toLowerCase() === "flood" ? (
-                <Image
-                  source={floodIcon}
-                  style={styles.markerIcon}
-                  resizeMode="contain"
-                />
-              ) : e.request_type.toLowerCase() === "medical" ? (
-                <Image
-                  source={medicalIcon}
-                  style={styles.markerIcon}
-                  resizeMode="contain"
-                />
-              ) : e.request_type.toLowerCase() === "landslide" ? (
-                <Image
-                  source={landslideIcon}
-                  style={styles.markerIcon}
-                  resizeMode="contain"
-                />
-              ) : null}
+          emergency.map((e) => {
+            const coords = {
+              latitude: parseFloat(e.latitude),
+              longitude: parseFloat(e.longitude),
+            };
+            return (
+              <Marker
+                key={e.id}
+                coordinate={coords}
+                title={`Emergency: ${e.request_type}`}
+                description={`Reported by ${e.user?.name}`}
+                onPress={() => RespondToEmergency(e.id, coords)}
+                anchor={{ x: 0.5, y: 0.5 }}
+              >
+                <WarningSignal />
+              </Marker>
+            );
+          })}
 
-              <Callout>
-                <TouchableOpacity>
-                  <Text style={{ color: "blue", fontWeight: "bold" }}>
-                    Respond
-                  </Text>
-                </TouchableOpacity>
-              </Callout>
-            </Marker>
-          ))}
+        {routeCoords.length > 0 && (
+          <Polyline
+            coordinates={routeCoords}
+            strokeWidth={5}
+            strokeColor="blue"
+          />
+        )}
       </MapView>
     </View>
   );
@@ -160,13 +148,5 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   map: {
     height: "100%",
-  },
-  marker: {
-    width: 200,
-    height: 200,
-  },
-  markerIcon: {
-    width: 70,
-    height: 70,
   },
 });

@@ -36,7 +36,6 @@ const getApiClient = async () => {
     },
   });
 
-  // Request logging
   api.interceptors.request.use(
     (request) => {
       console.log("📤 Axios Request:");
@@ -52,7 +51,6 @@ const getApiClient = async () => {
     }
   );
 
-  // Response logging
   api.interceptors.response.use(
     (response) => {
       console.log("📥 Axios Response:");

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\UserManagementController;
 use App\Http\Controllers\api\EmergencyRequestController;
+use App\Http\Controllers\api\EmergencyResponseController;
 
 Route::controller(AuthController::class)->prefix('auth')->group(function () {
     Route::post('register', 'register');
@@ -31,6 +32,9 @@ Route::middleware(['auth:sanctum'])->prefix('user')->group(function () {
         Route::post('logout', 'logout');
         Route::post('change/password', 'changePassword');
     });
+
+
+
 });
 
 Route::controller(EmergencyRequestController::class)->prefix('emergency')->group(function () {
@@ -44,4 +48,12 @@ Route::controller(EmergencyRequestController::class)->prefix('emergency')->group
             Route::post('reject/{id}', 'rejectEmergency');
         });
     });
+});
+
+Route::controller(EmergencyResponseController::class)->prefix('emergency/response')->group(function () {
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('respond', 'createResponse');
+    });
+
 });
