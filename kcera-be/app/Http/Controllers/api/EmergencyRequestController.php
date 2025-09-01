@@ -134,6 +134,15 @@ class EmergencyRequestController extends BaseController
             return $this->sendError('Unable to submit emergency request.');
         }
 
+        $this->notificationRecord([
+            'receiver_id' => null,
+            'report_id' => $emergencyReport->id,
+            'response_id' => null,
+            'receiver_type' => 'everyone',
+            'type' => 'emergency',
+            'title' => "🚨 New {$request->request_type} Reported",
+            'message' => "A new {$request->request_type} emergency has been reported. Stay alert and safe.",
+        ]);
 
         return $this->sendResponse(['photo_url' => $publicUrl], 'Emergency request submitted successfully.');
     }
@@ -150,6 +159,16 @@ class EmergencyRequestController extends BaseController
 
         $emergencyRecord->save();
 
+        $this->notificationRecord([
+            'receiver_id' => $emergencyRecord->user_id,
+            'report_id' => $emergencyRecord->id,
+            'response_id' => null,
+            'receiver_type' => 'reporter',
+            'type' => 'verified emergency',
+            'title' => "Emergency Reported Verified",
+            'message' => "Your reported incident on {$emergencyRecord->created_at->format('F j, Y g:i A')} has been verified by the dispatcher. Response in progress",
+        ]);
+
         return $this->sendResponse([], 'Verified Successfully');
     }
 
@@ -164,6 +183,16 @@ class EmergencyRequestController extends BaseController
         $emergencyRecord->request_status = 'rejected';
 
         $emergencyRecord->save();
+
+        $this->notificationRecord([
+            'receiver_id' => $emergencyRecord->user_id,
+            'report_id' => $emergencyRecord->id,
+            'response_id' => null,
+            'receiver_type' => 'reporter',
+            'type' => 'rejected emergency',
+            'title' => "Emergency Reported Rejected",
+            'message' => "Your reported incident on {$emergencyRecord->created_at->format('F j, Y g:i A')} has been rejected by the dispatcher.",
+        ]);
 
         return $this->sendResponse([], 'Rejected Successfully');
     }

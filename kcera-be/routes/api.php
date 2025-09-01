@@ -5,6 +5,7 @@ use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\UserManagementController;
 use App\Http\Controllers\api\EmergencyRequestController;
 use App\Http\Controllers\api\EmergencyResponseController;
+use App\Http\Controllers\api\NotificationController;
 
 Route::controller(AuthController::class)->prefix('auth')->group(function () {
     Route::post('register', 'register');
@@ -54,6 +55,20 @@ Route::controller(EmergencyResponseController::class)->prefix('emergency/respons
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('respond', 'createResponse');
+
+        Route::middleware('admin.only')->prefix('admin.only')->group(function () {
+            Route::get('ongoing', 'index');
+        });
     });
 
 });
+
+
+Route::controller(NotificationController::class)->prefix('notification')->group(function () {
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('get', 'index');
+    });
+});
+
+

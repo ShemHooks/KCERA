@@ -31,4 +31,9 @@ class EmergencyReport extends Model
     {
         return $this->hasOne(EmergencyResponse::class, 'request_id');
     }
+
+    public function relatedNotification()
+    {
+        return $this->hasMany(Notification::class, 'report_id');
+    }
 }

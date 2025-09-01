@@ -3,9 +3,24 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 
 class BaseController extends Controller
 {
+
+    public function notificationRecord(array $data)
+    {
+        try {
+            $notification = Notification::create($data);
+            return $notification;
+        } catch (\Exception $e) {
+            \Log::error("Notification record failed: " . $e->getMessage());
+            return null;
+        }
+    }
+
+
+
     public function sendResponse($result = null, $message)
     {
         $response = [

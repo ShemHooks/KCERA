@@ -9,10 +9,26 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 
-
-
 class EmergencyResponseController extends BaseController
 {
+
+    public function index(Request $request): JsonResponse
+    {
+        $response_id = $request->input['response_id'];
+
+        $responses = EmergencyResponse::query()
+            ->when($response_id, function ($query) use ($response_id) {
+                $query->orWhere('id', $response_id);
+            })
+            ->where('request_status', 'in_transit')
+            ->get();
+
+        if ($responses === null) {
+            return $this->sendError('There is no on-going response', [], 404);
+        }
+
+        return $this->sendResponse($responses, 'on-going responses');
+    }
 
     public function createResponse(Request $request): JsonResponse
     {

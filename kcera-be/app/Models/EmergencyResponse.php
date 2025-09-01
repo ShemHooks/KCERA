@@ -44,4 +44,9 @@ class EmergencyResponse extends Model
         return $this->hasOne(History::class);
     }
 
+    public function relatedNotification()
+    {
+        return $this->hasOne(Notification::class, 'response_id');
+    }
+
 }
