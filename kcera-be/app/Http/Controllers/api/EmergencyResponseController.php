@@ -14,20 +14,20 @@ class EmergencyResponseController extends BaseController
 
     public function index(Request $request): JsonResponse
     {
-        $response_id = $request->input['response_id'];
+        $response_id = $request->input('response_id');
 
-        $responses = EmergencyResponse::query()
+        $responses = EmergencyResponse::with('report')
             ->when($response_id, function ($query) use ($response_id) {
-                $query->orWhere('id', $response_id);
+                $query->where('id', $response_id);
             })
             ->where('request_status', 'in_transit')
             ->get();
 
-        if ($responses === null) {
+        if ($responses->isEmpty()) {
             return $this->sendError('There is no on-going response', [], 404);
         }
 
-        return $this->sendResponse($responses, 'on-going responses');
+        return $this->sendResponse($responses, 'On-going responses');
     }
 
     public function createResponse(Request $request): JsonResponse

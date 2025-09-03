@@ -15,6 +15,7 @@ import GetRespondersApi from "./API/GetRespondersApi";
 import GetDriversApi from "./API/GetDriversApi";
 import ApproveUserApi from "./API/ApproveUserApi";
 import GetEmergencyApi from "./API/GetEmergencyApi";
+import GetCurrentResponsesApi from "./API/GetCurrentResponsesApi";
 //navigation
 import { NAVIGATION } from "./components/ContentNavigation";
 
@@ -41,6 +42,8 @@ const EmergencyRequests = lazy(
 );
 
 const ReportsTable = lazy(() => import("./components/Tables/ReportsTable"));
+
+const OnGoing = lazy(() => import("./components/Tables/OngoingResponses"));
 
 const AdminAccountSetting = lazy(
   () => import("./components/AdminAccountSetting")
@@ -70,7 +73,7 @@ const renderContent = (
   responders,
   drivers,
   EmergencyReq,
-  reports
+  OngoingResponses
 ) => {
   switch (section) {
     case "emergencyRequests":
@@ -126,10 +129,10 @@ const renderContent = (
         </Suspense>
       );
 
-    case "reports":
+    case "ongoing":
       return (
         <Suspense fallback={<Loader />}>
-          <ReportsTable data={reports} />
+          <OnGoing data={OngoingResponses} />
         </Suspense>
       );
 
@@ -251,23 +254,17 @@ export default function AdminDashboard() {
     SetEmergency(emergencyData);
   };
 
-  // reports naman ni
+  //handle sa pag kwa sang ongoing responses
 
-  const [reports, setReports] = React.useState([]);
+  const [ongoingResponses, setOngoingResponses] = React.useState([]);
 
   React.useEffect(() => {
-    socket.on("ReadPatientCareReport", () => {
-      handleReport();
-    });
-    handleReport();
+    handleGetResponses();
   }, []);
 
-  const handleReport = async () => {
-    const reported = await GetReport();
-
-    if (reported.reports) {
-      setReports(reported.reports);
-    }
+  const handleGetResponses = async () => {
+    const responses = await GetCurrentResponsesApi();
+    setOngoingResponses(responses.data.data);
   };
 
   const router = useDemoRouter("/emergencyRequests");
@@ -294,7 +291,7 @@ export default function AdminDashboard() {
             responders,
             drivers,
             EmergencyReq,
-            reports
+            ongoingResponses
           )}
         </div>
       </DashboardLayout>

@@ -3,10 +3,12 @@ import axiosPrivateInstance from "./../../../utils/API/PrivateAxios";
 const GetCurrentResponsesApi = async () => {
   try {
     const response = await axiosPrivateInstance.get(
-      "pi/emergency/response/admin.only/ongoing"
+      "api/emergency/response/admin.only/ongoing"
     );
 
-    console.log(response);
+    return {
+      data: response.data,
+    };
   } catch (error) {
     console.log(error);
   }

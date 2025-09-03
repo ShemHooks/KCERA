@@ -72,11 +72,11 @@ export const NAVIGATION = [
     title: "On-going Responses",
     icon: <AccessTimeIcon />,
   },
-  {
-    segment: "history",
-    title: "History",
-    icon: <HistoryIcon />,
-  },
+  // {
+  //   segment: "history",
+  //   title: "History",
+  //   icon: <HistoryIcon />,
+  // },
   {
     segment: "analytics",
     title: "Analytics",

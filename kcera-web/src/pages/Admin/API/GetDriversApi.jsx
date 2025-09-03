@@ -12,8 +12,6 @@ const GetDriversApi = async () => {
       }
     );
 
-    console.log("drivers", response.data.data);
-
     return {
       drivers: response.data.data,
     };

@@ -12,7 +12,6 @@ import {
 import { GetDocTitle } from "../../../../utils/hooks/useDocumentTitle";
 
 const DriversTable = ({ drivers }) => {
-  console.log(drivers);
   return (
     <>
       <h1 className="mt-6 ml-10 text-3xl">Drivers</h1>

@@ -9,7 +9,7 @@ import {
   Modal,
   ActivityIndicator,
 } from "react-native";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, UrlTile, PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
 import { useEffect, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
@@ -232,6 +232,7 @@ const ReportEmergency = () => {
               Where is the location of the emergency?
             </Text>
             <MapView
+              provider={PROVIDER_GOOGLE}
               style={styles.map}
               mapType="hybrid"
               initialRegion={{

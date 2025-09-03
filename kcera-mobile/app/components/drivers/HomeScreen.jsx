@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet } from "react-native";
-import MapView, { Marker, Polyline } from "react-native-maps";
+import { View, StyleSheet, Image } from "react-native";
+import MapView, {
+  Marker,
+  Polyline,
+  UrlTile,
+  PROVIDER_GOOGLE,
+} from "react-native-maps";
 import * as Location from "expo-location";
 import GetEmergencyApi from "../../api/drivers/GetEmergencyApi";
 import socket from "../../api/utility/socket";
@@ -11,7 +16,9 @@ import WarningSignal from "./WarningSignal";
 const HomeScreen = () => {
   const [userLocation, setUserLocation] = useState(null);
   const [emergency, SetEmergency] = useState(null);
-  const [routeCoords, setRouteCoords] = useState([]); // route for selected emergency
+  const [routeCoords, setRouteCoords] = useState([]);
+
+  const ambulance = require("../../../assets/app-images/markers/ambulance.png");
 
   useEffect(() => {
     const listener = () => getEmergencies();
@@ -92,6 +99,7 @@ const HomeScreen = () => {
       <MapView
         style={styles.map}
         mapType="hybrid"
+        provider={PROVIDER_GOOGLE}
         initialRegion={{
           latitude: userLocation ? userLocation.coords.latitude : 10.0125,
           longitude: userLocation ? userLocation.coords.longitude : 122.8121,
@@ -99,6 +107,19 @@ const HomeScreen = () => {
           longitudeDelta: 0.05,
         }}
       >
+        {/* Satellite imagery */}
+        <UrlTile
+          urlTemplate="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+          // maximumZ={19}
+        />
+
+        {/* Streets/labels overlay */}
+        <UrlTile
+          urlTemplate="https://cartodb-basemaps-a.global.ssl.fastly.net/light_only_labels/{z}/{x}/{y}.png"
+          // maximumZ={19}
+          zIndex={1}
+        />
+
         {/* Driver location */}
         {userLocation?.coords && (
           <Marker
@@ -107,7 +128,13 @@ const HomeScreen = () => {
               longitude: userLocation.coords.longitude,
             }}
             title="My Location"
-          />
+          >
+            <Image
+              source={ambulance}
+              style={{ width: 40, height: 40 }}
+              resizeMode="contain"
+            />
+          </Marker>
         )}
 
         {/* Emergencies */}
