@@ -39,3 +39,8 @@ yarn-error.*
 app-example
 
 /android
+
+# Ignore Laravel backend
+../kcera-be
+public/storage
+storage/app/public

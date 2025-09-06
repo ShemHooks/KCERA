@@ -1,0 +1,29 @@
+# Ignore backend Laravel project
+
+kcera-be
+../kcera-be
+public/storage
+storage/app/public
+
+# Ignore node modules (will be reinstalled during build)
+
+node_modules
+
+# Ignore git folder and local dev stuff
+
+.git
+.gitignore
+
+# Expo / build artifacts
+
+dist
+build
+web-build
+.expo
+.expo-shared
+
+# OS specific
+
+S
+.DS_Store
+Thumbs.db
