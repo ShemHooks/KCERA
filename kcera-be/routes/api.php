@@ -6,6 +6,7 @@ use App\Http\Controllers\api\UserManagementController;
 use App\Http\Controllers\api\EmergencyRequestController;
 use App\Http\Controllers\api\EmergencyResponseController;
 use App\Http\Controllers\api\NotificationController;
+use App\Http\Controllers\api\AnalyticsController;
 
 Route::controller(AuthController::class)->prefix('auth')->group(function () {
     Route::post('register', 'register');
@@ -72,3 +73,10 @@ Route::controller(NotificationController::class)->prefix('notification')->group(
 });
 
 
+Route::controller(AnalyticsController::class)->prefix('analytics')->group(function () {
+    Route::get('/summary', 'summary');
+    Route::get('/by-type', 'byType');
+    Route::get('monthly', 'monthly');
+    Route::get('/top-user', 'topUsers');
+
+});

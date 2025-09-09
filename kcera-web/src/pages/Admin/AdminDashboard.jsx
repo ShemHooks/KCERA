@@ -49,6 +49,8 @@ const AdminAccountSetting = lazy(
   () => import("./components/AdminAccountSetting")
 );
 
+const AnalyticDashboard = lazy(() => import("./components/AnalyticsDashboard"));
+
 // import { Emergency } from "@mui/icons-material";
 
 function useDemoRouter(initialPath) {
@@ -133,6 +135,13 @@ const renderContent = (
       return (
         <Suspense fallback={<Loader />}>
           <OnGoing data={OngoingResponses} />
+        </Suspense>
+      );
+
+    case "analytics":
+      return (
+        <Suspense fallback={<Loader />}>
+          <AnalyticDashboard />
         </Suspense>
       );
 
