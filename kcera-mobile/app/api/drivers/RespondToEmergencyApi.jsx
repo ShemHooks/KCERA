@@ -1,4 +1,5 @@
 import getApiClient from "../axios";
+import socket from "../utility/socket";
 
 const RespondToEmergencyApi = async (requestId, currentLocation) => {
   const payload = new FormData();
@@ -13,6 +14,7 @@ const RespondToEmergencyApi = async (requestId, currentLocation) => {
     const response = await api.post("emergency/response/respond", payload);
 
     if (response) {
+      socket.emit("respond");
       return {
         result: response,
       };

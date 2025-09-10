@@ -128,6 +128,7 @@ const HomeScreen = () => {
               longitude: userLocation.coords.longitude,
             }}
             title="My Location"
+            style={styles.marker}
           >
             <Image
               source={ambulance}
@@ -152,6 +153,7 @@ const HomeScreen = () => {
                 description={`Reported by ${e.user?.name}`}
                 onPress={() => RespondToEmergency(e.id, coords)}
                 anchor={{ x: 0.5, y: 0.5 }}
+                style={styles.marker}
               >
                 <WarningSignal />
               </Marker>
@@ -175,5 +177,9 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   map: {
     height: "100%",
+  },
+  marker: {
+    width: 50,
+    height: 50,
   },
 });

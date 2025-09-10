@@ -19,7 +19,7 @@ import {
   getTopUsers,
 } from "./../API/AnalyticApi";
 
-const COLORS = ["#00E5FF", "#00C853", "#FFD600", "#FF5252"];
+const COLORS = ["#FF8C00", "#00E5FF", "#555555", "#FF5252"];
 
 export default function AnalyticsDashboard() {
   const [summary, setSummary] = useState({});

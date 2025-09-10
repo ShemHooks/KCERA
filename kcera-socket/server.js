@@ -48,10 +48,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("respond", () => {
-    console.log("Received respond event from client");
-
-    io.emit("responded", { message: "Driver has responded" });
-    console.log("Emitted responded event");
+    io.emit("responded");
   });
 
   socket.on("disconnect", () => {

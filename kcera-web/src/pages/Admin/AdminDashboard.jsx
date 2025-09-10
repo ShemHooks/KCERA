@@ -268,6 +268,9 @@ export default function AdminDashboard() {
   const [ongoingResponses, setOngoingResponses] = React.useState([]);
 
   React.useEffect(() => {
+    socket.on("responded", () => {
+      handleGetResponses();
+    });
     handleGetResponses();
   }, []);
 

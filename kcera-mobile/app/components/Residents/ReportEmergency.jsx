@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
 import SendRequestApi from "../../api/residents/SendRequestApi";
+import Index from "./../../index";
 
 const fire = require("../../../assets/app-images/Emergency/fire.png");
 const flood = require("../../../assets/app-images/Emergency/flood.jpg");
@@ -232,9 +233,7 @@ const ReportEmergency = () => {
               Where is the location of the emergency?
             </Text>
             <MapView
-              provider={PROVIDER_GOOGLE}
               style={styles.map}
-              mapType="hybrid"
               initialRegion={{
                 latitude: userLocation ? userLocation.coords.latitude : 10.0125,
                 longitude: userLocation
@@ -248,30 +247,42 @@ const ReportEmergency = () => {
                 setPinnedLocation({ latitude, longitude });
               }}
             >
-              {userLocation && userLocation.coords && (
+              <UrlTile
+                urlTemplate="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                maximumZ={19}
+                flipY={false}
+                zIndex={1}
+              />
+
+              <UrlTile
+                urlTemplate="https://cartodb-basemaps-a.global.ssl.fastly.net/light_only_labels/{z}/{x}/{y}.png"
+                zIndex={2}
+              />
+
+              {/* Current Location */}
+              {userLocation?.coords && (
                 <Marker
                   coordinate={{
                     latitude: userLocation.coords.latitude,
                     longitude: userLocation.coords.longitude,
                   }}
                   title="My Location"
-                  description="This is your current location"
+                  pinColor="blue"
                 />
               )}
 
+              {/* Pinned Location */}
               {pinnedLocation && (
                 <Marker
                   coordinate={pinnedLocation}
                   title="Pinned Location"
-                  description={`Lat: ${pinnedLocation.latitude.toFixed(
-                    4
-                  )}, Lng: ${pinnedLocation.longitude.toFixed(4)}`}
                   pinColor="red"
                   draggable
                   onDragEnd={(e) => setPinnedLocation(e.nativeEvent.coordinate)}
                 />
               )}
             </MapView>
+
             <TouchableOpacity
               style={styles.useLocationBtn}
               onPress={() => {
