@@ -58,8 +58,6 @@ class EmergencyResponseController extends BaseController
 
         }
 
-
-
         $response = EmergencyResponse::create([
             'driver_id' => $user->id,
             'request_id' => $request->request_id,

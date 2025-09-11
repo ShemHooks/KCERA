@@ -43,3 +43,8 @@
     opacity: 0;
   }
 }
+
+/* Leftlet RoutingControl  */
+.leaflet-routing-container {
+  color: #0a2540;
+}

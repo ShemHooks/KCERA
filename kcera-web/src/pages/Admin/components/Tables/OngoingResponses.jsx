@@ -117,7 +117,12 @@ const OngoingResponses = ({ data }) => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution="&copy; OpenStreetMap contributors"
         />
-        <RoutingControl from={from} to={to} setRouteInfo={setRouteInfo} />
+        <RoutingControl
+          from={from}
+          to={to}
+          setRouteInfo={setRouteInfo}
+          className="text-black"
+        />
       </MapContainer>
 
       {routeInfo && (
