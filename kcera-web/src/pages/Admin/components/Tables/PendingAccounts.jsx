@@ -9,6 +9,7 @@ import {
   Button,
   Modal,
   Box,
+  TablePagination,
 } from "@mui/material";
 import { useState } from "react";
 import { GetDocTitle } from "../../../../utils/hooks/useDocumentTitle";
@@ -37,6 +38,15 @@ const PendingAccounts = ({ users, approvePending, declinePending }) => {
 
   const handleClose = () => setOpen(false);
 
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  // Paginated users
+  const paginatedUsers = users.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
+
   return (
     <>
       <div className="flex min-h-screen text-white bg-slate-950">
@@ -58,7 +68,7 @@ const PendingAccounts = ({ users, approvePending, declinePending }) => {
                 </tr>
               </thead>
               <tbody>
-                {users.map((user) => (
+                {paginatedUsers.map((user) => (
                   <tr key={user.id} className="border-b border-slate-800">
                     <td className="py-2">{user.name}</td>
                     <td>{user.email}</td>
@@ -107,33 +117,51 @@ const PendingAccounts = ({ users, approvePending, declinePending }) => {
                 ))}
               </tbody>
             </table>
-          </div>
-
-          {/* Modal */}
-          <Modal open={open} onClose={handleClose}>
-            <Box
-              sx={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                bgcolor: "#0f172a", // slate-950
-                borderRadius: "0.5rem",
-                boxShadow: 24,
-                p: 2,
-              }}
-            >
-              <img
-                src={modalImage}
-                alt="Zoomed"
-                style={{
-                  maxWidth: "100%",
-                  maxHeight: "80vh",
-                  borderRadius: "0.5rem",
+            {/* Pagination */}
+            <div className="flex justify-end mt-4">
+              <TablePagination
+                component="div"
+                count={users.length}
+                page={page}
+                onPageChange={(e, newPage) => setPage(newPage)}
+                rowsPerPage={rowsPerPage}
+                onRowsPerPageChange={(e) => {
+                  setRowsPerPage(parseInt(e.target.value, 10));
+                  setPage(0);
+                }}
+                sx={{
+                  color: "white",
+                  "& .MuiTablePagination-actions button": { color: "white" },
                 }}
               />
-            </Box>
-          </Modal>
+            </div>
+
+            {/* Modal */}
+            <Modal open={open} onClose={handleClose}>
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  bgcolor: "#0f172a",
+                  borderRadius: "0.5rem",
+                  boxShadow: 24,
+                  p: 2,
+                }}
+              >
+                <img
+                  src={modalImage}
+                  alt="Zoomed"
+                  style={{
+                    maxWidth: "100%",
+                    maxHeight: "80vh",
+                    borderRadius: "0.5rem",
+                  }}
+                />
+              </Box>
+            </Modal>
+          </div>
         </main>
       </div>
     </>

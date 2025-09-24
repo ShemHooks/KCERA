@@ -1,50 +1,91 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-} from "@mui/material";
+import { TablePagination } from "@mui/material";
 import { GetDocTitle } from "../../../../utils/hooks/useDocumentTitle";
+import { useState } from "react";
 
 const Approveduserstable = ({ resident }) => {
   console.log("residents", resident);
+
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const paginatedResidents = resident.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
   return (
     <>
-      <h1 className="mt-6 ml-10 text-3xl">Residents</h1>
-      <GetDocTitle title="KCERA: List of Residents" />
+      <div className="flex min-h-screen text-white bg-slate-950">
+        <main className="flex-1 p-6">
+          <h2 className="mb-4 text-2xl font-semibold">Residents</h2>
+          <GetDocTitle title="KCERA: List of Residents" />
 
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell style={{ width: "25%" }}>Fullname</TableCell>
-              <TableCell style={{ width: "25%" }}>Email</TableCell>
-              <TableCell style={{ width: "25%" }}>Contact No.</TableCell>
-              <TableCell style={{ width: "25%" }}>Home Address</TableCell>
+          <div className="flex flex-wrap gap-4 mb-6">
+            <select className="px-3 py-2 text-white rounded-md bg-slate-800">
+              <option>Sort by</option>
+              <option>Name (A-Z)</option>
+              <option>Name (Z-A)</option>
+              <option>Email</option>
+            </select>
 
-              {/* <TableCell style={{ width: "25%" }}>Actions</TableCell> */}
-            </TableRow>
-          </TableHead>
+            <select className="px-3 py-2 text-white rounded-md bg-slate-800">
+              <option>Filter by</option>
+              <option>With Contact No.</option>
+              <option>No Contact No.</option>
+            </select>
 
-          <TableBody>
-            {resident.map((resident) => (
-              <TableRow key={resident.id}>
-                <TableCell>{resident.name}</TableCell>
-                <TableCell>{resident.email}</TableCell>
-                <TableCell>{resident.phone}</TableCell>
-                <TableCell>{resident.address}</TableCell>
-                {/* <TableCell>
-                  <Button variant="contained" onClick={() => approvePending(user.id)}>Approve</Button>{" "}
-                  <Button variant="outlined" onClick={() => declinePending(user.id)}>Decline</Button>{" "}
-                </TableCell> */}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            <input
+              type="text"
+              placeholder="Search resident..."
+              className="px-3 py-2 text-white rounded-md bg-slate-800 w-60"
+            />
+          </div>
+
+          {/* Table */}
+          <div className="p-4 rounded-lg shadow bg-slate-900">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left border-b border-slate-800">
+                  <th className="w-1/4 py-2">Fullname</th>
+                  <th className="w-1/4">Email</th>
+                  <th className="w-1/4">Contact No.</th>
+                  <th className="w-1/4">Home Address</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {paginatedResidents.map((resident) => (
+                  <tr key={resident.id} className="border-b border-slate-800">
+                    <td className="py-2">{resident.name}</td>
+                    <td>{resident.email}</td>
+                    <td>{resident.phone}</td>
+                    <td>{resident.address}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            {/* Pagination */}
+            <div className="flex justify-end mt-4">
+              <TablePagination
+                component="div"
+                count={resident.length}
+                page={page}
+                onPageChange={(e, newPage) => setPage(newPage)}
+                rowsPerPage={rowsPerPage}
+                onRowsPerPageChange={(e) => {
+                  setRowsPerPage(parseInt(e.target.value, 10));
+                  setPage(0);
+                }}
+                rowsPerPageOptions={[5, 10, 25, 50]}
+                sx={{
+                  color: "white",
+                  "& .MuiTablePagination-actions button": { color: "white" },
+                }}
+              />
+            </div>
+          </div>
+        </main>
+      </div>
     </>
   );
 };
