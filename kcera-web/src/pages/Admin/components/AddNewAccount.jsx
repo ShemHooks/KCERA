@@ -40,12 +40,12 @@ const NewAccount = () => {
   };
   return (
     <>
-      <div className="flex min-h-screen text-white bg-slate-950">
+      <div className="flex min-h-screen text-white bg-gradient-to-br from-gray-900 via-gray-800 to-black">
         <main className="flex-1 p-6">
           <h1 className="mb-6 text-2xl font-semibold">Add New Account</h1>
           <GetDocTitle title="KCERA: Add New Account" />
 
-          <div className="flex flex-col gap-4 p-6 rounded-lg shadow bg-slate-900">
+          <div className="flex flex-col gap-4 p-6 text-white rounded-lg shadow bg-black/30 backdrop-blur-sm">
             <TextField
               label="Name"
               variant="outlined"
@@ -120,7 +120,9 @@ const NewAccount = () => {
             </FormControl>
 
             <FormControl fullWidth>
-              <InputLabel id="role-select-label">Role</InputLabel>
+              <InputLabel id="role-select-label " className="text-white">
+                Role
+              </InputLabel>
               <Select
                 labelId="role-select-label"
                 id="role-select"

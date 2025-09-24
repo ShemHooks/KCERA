@@ -53,6 +53,10 @@ const AnalyticDashboard = lazy(() => import("./components/AnalyticsDashboard"));
 
 const SystemLogs = lazy(() => import("./components/Tables/SystemLogs"));
 
+const NotifyUsers = lazy(() => import("./components/Tables/NotifyUsers"));
+
+const History = lazy(() => import("./components/Tables/History"));
+
 // import { Emergency } from "@mui/icons-material";
 
 function useDemoRouter(initialPath) {
@@ -158,6 +162,20 @@ const renderContent = (
       return (
         <Suspense>
           <SystemLogs />
+        </Suspense>
+      );
+
+    case "notifyUser":
+      return (
+        <Suspense>
+          <NotifyUsers />
+        </Suspense>
+      );
+
+    case "history":
+      return (
+        <Suspense>
+          <History />
         </Suspense>
       );
 

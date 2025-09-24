@@ -1,24 +1,30 @@
-import { TablePagination } from "@mui/material";
 import { GetDocTitle } from "../../../../utils/hooks/useDocumentTitle";
 import { useState } from "react";
 
 const Approveduserstable = ({ resident }) => {
-  console.log("residents", resident);
-
-  const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const totalPages = Math.ceil(resident.length / rowsPerPage);
 
   const paginatedResidents = resident.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
+    (currentPage - 1) * rowsPerPage,
+    currentPage * rowsPerPage
   );
+
+  const handleRowsChange = (e) => {
+    setRowsPerPage(Number(e.target.value));
+    setCurrentPage(1); // reset to first page when rows change
+  };
+
   return (
     <>
-      <div className="flex min-h-screen text-white bg-slate-950">
+      <div className="flex min-h-screen text-white bg-gradient-to-br from-gray-900 via-gray-800 to-black">
         <main className="flex-1 p-6">
           <h2 className="mb-4 text-2xl font-semibold">Residents</h2>
           <GetDocTitle title="KCERA: List of Residents" />
 
+          {/* Filters */}
           <div className="flex flex-wrap gap-4 mb-6">
             <select className="px-3 py-2 text-white rounded-md bg-slate-800">
               <option>Sort by</option>
@@ -41,7 +47,7 @@ const Approveduserstable = ({ resident }) => {
           </div>
 
           {/* Table */}
-          <div className="p-4 rounded-lg shadow bg-slate-900">
+          <div className="p-4 rounded-lg shadow bg-black/30 backdrop-blur-sm">
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-left border-b border-slate-800">
@@ -53,35 +59,81 @@ const Approveduserstable = ({ resident }) => {
               </thead>
 
               <tbody>
-                {paginatedResidents.map((resident) => (
-                  <tr key={resident.id} className="border-b border-slate-800">
-                    <td className="py-2">{resident.name}</td>
-                    <td>{resident.email}</td>
-                    <td>{resident.phone}</td>
-                    <td>{resident.address}</td>
+                {paginatedResidents.map((res) => (
+                  <tr key={res.id} className="border-b border-slate-800">
+                    <td className="py-2">{res.name}</td>
+                    <td>{res.email}</td>
+                    <td>{res.phone}</td>
+                    <td>{res.address}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
 
-            {/* Pagination */}
-            <div className="flex justify-end mt-4">
-              <TablePagination
-                component="div"
-                count={resident.length}
-                page={page}
-                onPageChange={(e, newPage) => setPage(newPage)}
-                rowsPerPage={rowsPerPage}
-                onRowsPerPageChange={(e) => {
-                  setRowsPerPage(parseInt(e.target.value, 10));
-                  setPage(0);
-                }}
-                rowsPerPageOptions={[5, 10, 25, 50]}
-                sx={{
-                  color: "white",
-                  "& .MuiTablePagination-actions button": { color: "white" },
-                }}
-              />
+            {/* Custom Pagination */}
+            <div className="flex flex-col items-center justify-between gap-4 mt-4 text-sm text-slate-400 md:flex-row">
+              {/* Rows per page selector */}
+              <div className="flex items-center gap-2">
+                <span>Rows per page:</span>
+                <select
+                  value={rowsPerPage}
+                  onChange={handleRowsChange}
+                  className="px-2 py-1 text-white rounded-md bg-slate-800"
+                >
+                  <option value={5}>5</option>
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                </select>
+              </div>
+
+              {/* Page controls */}
+              <div className="flex items-center gap-4">
+                <span>
+                  Page {currentPage} of {totalPages || 1}
+                </span>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                    disabled={currentPage === 1}
+                    className={`px-3 py-1 rounded-md ${
+                      currentPage === 1
+                        ? "bg-slate-800 text-slate-600 cursor-not-allowed"
+                        : "bg-slate-800 hover:bg-slate-700"
+                    }`}
+                  >
+                    Prev
+                  </button>
+
+                  {Array.from({ length: totalPages }, (_, i) => (
+                    <button
+                      key={i + 1}
+                      onClick={() => setCurrentPage(i + 1)}
+                      className={`px-3 py-1 rounded-md ${
+                        currentPage === i + 1
+                          ? "bg-blue-600 hover:bg-blue-500"
+                          : "bg-slate-800 hover:bg-slate-700"
+                      }`}
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
+
+                  <button
+                    onClick={() =>
+                      setCurrentPage((p) => Math.min(p + 1, totalPages))
+                    }
+                    disabled={currentPage === totalPages}
+                    className={`px-3 py-1 rounded-md ${
+                      currentPage === totalPages || totalPages === 0
+                        ? "bg-slate-800 text-slate-600 cursor-not-allowed"
+                        : "bg-slate-800 hover:bg-slate-700"
+                    }`}
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </main>

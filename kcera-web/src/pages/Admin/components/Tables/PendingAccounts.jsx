@@ -1,31 +1,5 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Button,
-  Modal,
-  Box,
-  TablePagination,
-} from "@mui/material";
 import { useState } from "react";
 import { GetDocTitle } from "../../../../utils/hooks/useDocumentTitle";
-
-const modalStyle = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  maxWidth: "90%",
-  maxHeight: "90%",
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: 1,
-  outline: "none",
-};
 
 const PendingAccounts = ({ users, approvePending, declinePending }) => {
   const [open, setOpen] = useState(false);
@@ -38,23 +12,29 @@ const PendingAccounts = ({ users, approvePending, declinePending }) => {
 
   const handleClose = () => setOpen(false);
 
-  const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  // Paginated users
+  const totalPages = Math.ceil(users.length / rowsPerPage);
+
   const paginatedUsers = users.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
+    (currentPage - 1) * rowsPerPage,
+    currentPage * rowsPerPage
   );
+
+  const handleRowsChange = (e) => {
+    setRowsPerPage(Number(e.target.value));
+    setCurrentPage(1);
+  };
 
   return (
     <>
-      <div className="flex min-h-screen text-white bg-slate-950">
+      <div className="flex min-h-screen text-white bg-gradient-to-br from-gray-900 via-gray-800 to-black">
         <main className="flex-1 p-6">
           <h2 className="mb-4 text-2xl font-semibold">Pending Accounts</h2>
           <GetDocTitle title="KCERA: Pending Accounts" />
 
-          <div className="p-4 rounded-lg shadow bg-slate-900">
+          <div className="p-4 rounded-lg shadow bg-black/30 backdrop-blur-sm">
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-left border-b border-slate-800">
@@ -117,51 +97,92 @@ const PendingAccounts = ({ users, approvePending, declinePending }) => {
                 ))}
               </tbody>
             </table>
-            {/* Pagination */}
-            <div className="flex justify-end mt-4">
-              <TablePagination
-                component="div"
-                count={users.length}
-                page={page}
-                onPageChange={(e, newPage) => setPage(newPage)}
-                rowsPerPage={rowsPerPage}
-                onRowsPerPageChange={(e) => {
-                  setRowsPerPage(parseInt(e.target.value, 10));
-                  setPage(0);
-                }}
-                sx={{
-                  color: "white",
-                  "& .MuiTablePagination-actions button": { color: "white" },
-                }}
-              />
-            </div>
 
-            {/* Modal */}
-            <Modal open={open} onClose={handleClose}>
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  bgcolor: "#0f172a",
-                  borderRadius: "0.5rem",
-                  boxShadow: 24,
-                  p: 2,
-                }}
+            {/* Custom Pagination (same as SystemLogs) */}
+            <div className="flex flex-col items-center justify-between gap-4 mt-4 text-sm text-slate-400 md:flex-row">
+              {/* Rows per page selector */}
+              <div className="flex items-center gap-2">
+                <span>Rows per page:</span>
+                <select
+                  value={rowsPerPage}
+                  onChange={handleRowsChange}
+                  className="px-2 py-1 text-white rounded-md bg-slate-800"
+                >
+                  <option value={5}>5</option>
+                  <option value={10}>10</option>
+                  <option value={15}>15</option>
+                  <option value={20}>20</option>
+                </select>
+              </div>
+
+              {/* Page controls */}
+              <div className="flex items-center gap-4">
+                <span>
+                  Page {currentPage} of {totalPages || 1}
+                </span>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                    disabled={currentPage === 1}
+                    className={`px-3 py-1 rounded-md ${
+                      currentPage === 1
+                        ? "bg-slate-800 text-slate-600 cursor-not-allowed"
+                        : "bg-slate-800 hover:bg-slate-700"
+                    }`}
+                  >
+                    Prev
+                  </button>
+
+                  {Array.from({ length: totalPages }, (_, i) => (
+                    <button
+                      key={i + 1}
+                      onClick={() => setCurrentPage(i + 1)}
+                      className={`px-3 py-1 rounded-md ${
+                        currentPage === i + 1
+                          ? "bg-blue-600 hover:bg-blue-500"
+                          : "bg-slate-800 hover:bg-slate-700"
+                      }`}
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
+
+                  <button
+                    onClick={() =>
+                      setCurrentPage((p) => Math.min(p + 1, totalPages))
+                    }
+                    disabled={currentPage === totalPages}
+                    className={`px-3 py-1 rounded-md ${
+                      currentPage === totalPages || totalPages === 0
+                        ? "bg-slate-800 text-slate-600 cursor-not-allowed"
+                        : "bg-slate-800 hover:bg-slate-700"
+                    }`}
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Modal */}
+          {open && (
+            <div
+              className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70"
+              onClick={handleClose}
+            >
+              <div
+                className="p-2 rounded-lg bg-slate-900"
+                onClick={(e) => e.stopPropagation()}
               >
                 <img
                   src={modalImage}
                   alt="Zoomed"
-                  style={{
-                    maxWidth: "100%",
-                    maxHeight: "80vh",
-                    borderRadius: "0.5rem",
-                  }}
+                  className="max-w-full max-h-[80vh] rounded-lg"
                 />
-              </Box>
-            </Modal>
-          </div>
+              </div>
+            </div>
+          )}
         </main>
       </div>
     </>

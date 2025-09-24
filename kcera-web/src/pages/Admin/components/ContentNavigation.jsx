@@ -91,7 +91,7 @@ export const NAVIGATION = [
   },
   {
     segment: "history",
-    title: "Reports History",
+    title: "History",
     icon: <HistoryIcon />,
   },
   {

@@ -36,6 +36,7 @@ export default function AnalyticsDashboard() {
 
   return (
     <div className="min-h-screen p-6 text-white bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+      {" "}
       {/* Summary Cards */}
       <div className="grid grid-cols-1 gap-6 mb-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
         {Object.entries(summary).map(([key, value]) => (
@@ -52,7 +53,6 @@ export default function AnalyticsDashboard() {
           </div>
         ))}
       </div>
-
       {/* Charts */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Pie Chart */}
@@ -60,7 +60,7 @@ export default function AnalyticsDashboard() {
           <h3 className="mb-4 text-xl font-semibold text-gray-300">
             Reports by Type
           </h3>
-          <div className="w-full h-72">
+          <div className="w-full h-72 ">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -124,7 +124,6 @@ export default function AnalyticsDashboard() {
           </div>
         </div>
       </div>
-
       {/* Top Users */}
       <div className="p-6 mt-6 border border-gray-700 shadow-lg rounded-2xl bg-black/40 backdrop-blur-md">
         <h3 className="mb-4 text-xl font-semibold text-gray-300">Top Users</h3>
