@@ -51,6 +51,10 @@ io.on("connection", (socket) => {
     io.emit("responded");
   });
 
+  socket.on("userStatusUpdated", () => {
+    io.emit("userStatusUpdate");
+  });
+
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);
   });

@@ -39,86 +39,103 @@ const PendingAccounts = ({ users, approvePending, declinePending }) => {
 
   return (
     <>
-      <h1 className="mt-6 ml-10 text-3xl">Pending Accounts</h1>
-      <GetDocTitle title="KCERA: Pending Accounts" />
+      <div className="flex min-h-screen text-white bg-slate-950">
+        <main className="flex-1 p-6">
+          <h2 className="mb-4 text-2xl font-semibold">Pending Accounts</h2>
+          <GetDocTitle title="KCERA: Pending Accounts" />
 
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Fullname</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Address</TableCell>
-              <TableCell>Front ID</TableCell>
-              <TableCell>Back ID</TableCell>
-              <TableCell>Face Photo</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {users.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell>{user.name}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>{user.address}</TableCell>
-                <TableCell>
-                  <img
-                    src={user.front_id_photo}
-                    alt="Front ID"
-                    style={{ width: 60, cursor: "pointer" }}
-                    onClick={() => handleImageClick(user.front_id_photo)}
-                  />
-                </TableCell>
-                <TableCell>
-                  <img
-                    src={user.back_id_photo}
-                    alt="Back ID"
-                    style={{ width: 60, cursor: "pointer" }}
-                    onClick={() => handleImageClick(user.back_id_photo)}
-                  />
-                </TableCell>
-                <TableCell>
-                  <img
-                    src={user.face_photo}
-                    alt="Face Photo"
-                    style={{ width: 60, cursor: "pointer" }}
-                    onClick={() => handleImageClick(user.face_photo)}
-                  />
-                </TableCell>
-                <TableCell>
-                  <div className="flex-col w-full h-full gap-4">
-                    <Button
-                      variant="contained"
-                      onClick={() => approvePending(user.id)}
-                      className="w-full mb-6"
-                    >
-                      Approve
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      onClick={() => declinePending(user.id)}
-                      className="w-full"
-                    >
-                      Decline
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+          <div className="p-4 rounded-lg shadow bg-slate-900">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left border-b border-slate-800">
+                  <th className="py-2">Fullname</th>
+                  <th>Email</th>
+                  <th>Address</th>
+                  <th>Front ID</th>
+                  <th>Back ID</th>
+                  <th>Face Photo</th>
+                  <th className="text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map((user) => (
+                  <tr key={user.id} className="border-b border-slate-800">
+                    <td className="py-2">{user.name}</td>
+                    <td>{user.email}</td>
+                    <td>{user.address}</td>
+                    <td>
+                      <img
+                        src={user.front_id_photo}
+                        alt="Front ID"
+                        className="w-16 rounded cursor-pointer hover:opacity-80"
+                        onClick={() => handleImageClick(user.front_id_photo)}
+                      />
+                    </td>
+                    <td>
+                      <img
+                        src={user.back_id_photo}
+                        alt="Back ID"
+                        className="w-16 rounded cursor-pointer hover:opacity-80"
+                        onClick={() => handleImageClick(user.back_id_photo)}
+                      />
+                    </td>
+                    <td>
+                      <img
+                        src={user.face_photo}
+                        alt="Face Photo"
+                        className="w-16 rounded cursor-pointer hover:opacity-80"
+                        onClick={() => handleImageClick(user.face_photo)}
+                      />
+                    </td>
+                    <td>
+                      <div className="flex flex-col items-center gap-2">
+                        <button
+                          onClick={() => approvePending(user.id)}
+                          className="w-full px-3 py-1 text-sm text-white transition bg-green-600 rounded-md hover:bg-green-500"
+                        >
+                          Approve
+                        </button>
+                        <button
+                          onClick={() => declinePending(user.id)}
+                          className="w-full px-3 py-1 text-sm text-red-400 transition border border-red-500 rounded-md hover:bg-red-500 hover:text-white"
+                        >
+                          Decline
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-      {/* Modal */}
-      <Modal open={open} onClose={handleClose}>
-        <Box sx={modalStyle}>
-          <img
-            src={modalImage}
-            alt="Zoomed"
-            style={{ maxWidth: "100%", maxHeight: "80vh" }}
-          />
-        </Box>
-      </Modal>
+          {/* Modal */}
+          <Modal open={open} onClose={handleClose}>
+            <Box
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                bgcolor: "#0f172a", // slate-950
+                borderRadius: "0.5rem",
+                boxShadow: 24,
+                p: 2,
+              }}
+            >
+              <img
+                src={modalImage}
+                alt="Zoomed"
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: "80vh",
+                  borderRadius: "0.5rem",
+                }}
+              />
+            </Box>
+          </Modal>
+        </main>
+      </div>
     </>
   );
 };

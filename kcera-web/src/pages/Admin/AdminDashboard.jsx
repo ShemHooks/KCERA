@@ -51,6 +51,8 @@ const AdminAccountSetting = lazy(
 
 const AnalyticDashboard = lazy(() => import("./components/AnalyticsDashboard"));
 
+const SystemLogs = lazy(() => import("./components/Tables/SystemLogs"));
+
 // import { Emergency } from "@mui/icons-material";
 
 function useDemoRouter(initialPath) {
@@ -152,6 +154,13 @@ const renderContent = (
         </Suspense>
       );
 
+    case "logs":
+      return (
+        <Suspense>
+          <SystemLogs />
+        </Suspense>
+      );
+
     default:
       return null;
   }
@@ -204,6 +213,9 @@ export default function AdminDashboard() {
   const [responders, SetResponders] = React.useState([]);
 
   React.useEffect(() => {
+    socket.on("userStatusUpdate", () => {
+      handleResponders();
+    });
     handleResponders();
   }, []);
 
@@ -219,6 +231,9 @@ export default function AdminDashboard() {
   const [drivers, SetDrivers] = React.useState([]);
 
   React.useEffect(() => {
+    socket.on("userStatusUpdate", () => {
+      handleDrivers();
+    });
     handleDrivers();
   }, []);
 

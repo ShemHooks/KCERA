@@ -9,9 +9,10 @@ import {
   DirectionsCar,
 } from "@mui/icons-material";
 import BarChartIcon from "@mui/icons-material/BarChart";
-// import ListAltIcon from "@mui/icons-material/ListAlt";
-import HistoryIcon from "@mui/icons-material/History";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import HistoryIcon from "@mui/icons-material/History";
+import ListAltIcon from "@mui/icons-material/ListAlt";
+import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 export const NAVIGATION = [
   {
     kind: "header",
@@ -21,6 +22,21 @@ export const NAVIGATION = [
     segment: "emergencyRequests",
     title: "Map",
     icon: <Emergency />,
+  },
+
+  {
+    segment: "ongoing",
+    title: "On-going Responses",
+    icon: <AccessTimeIcon />,
+  },
+
+  {
+    kind: "divider",
+  },
+
+  {
+    kind: "header",
+    title: "Account Management",
   },
 
   {
@@ -56,31 +72,27 @@ export const NAVIGATION = [
     ],
   },
   {
+    segment: "logs",
+    title: "User Logs",
+    icon: <ListAltIcon />,
+  },
+  {
     kind: "divider",
   },
   {
     kind: "header",
     title: "Analytics",
   },
-  // {
-  //   segment: "reports",
-  //   title: "Patient Care Reports",
-  //   icon: <ListAltIcon />,
-  // },
-  {
-    segment: "ongoing",
-    title: "On-going Responses",
-    icon: <AccessTimeIcon />,
-  },
-  // {
-  //   segment: "history",
-  //   title: "History",
-  //   icon: <HistoryIcon />,
-  // },
+
   {
     segment: "analytics",
     title: "Analytics",
     icon: <BarChartIcon />,
+  },
+  {
+    segment: "history",
+    title: "Reports History",
+    icon: <HistoryIcon />,
   },
   {
     kind: "divider",
@@ -88,6 +100,11 @@ export const NAVIGATION = [
   {
     kind: "header",
     title: "Setings",
+  },
+  {
+    segment: "notifyUser",
+    title: "Notify Users",
+    icon: <NotificationsActiveIcon />,
   },
   {
     segment: "myAccount",

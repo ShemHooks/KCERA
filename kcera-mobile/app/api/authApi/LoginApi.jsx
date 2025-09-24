@@ -2,6 +2,7 @@ import { router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import getApiClient from "../axios";
 import ROUTES from "./../../constant/routes";
+import socket from "../utility/socket";
 const LoginApi = async (email, password) => {
   try {
     const api = await getApiClient();
@@ -18,6 +19,8 @@ const LoginApi = async (email, password) => {
     const user_status = response.data.data.approval;
     const token = response.data.data.token;
     const user_role = response.data.data.role;
+
+    socket.emit("userStatusUpdated");
 
     if (user_status === "pending") {
       router.replace(ROUTES.RESIDENTS.PENDING_USER);

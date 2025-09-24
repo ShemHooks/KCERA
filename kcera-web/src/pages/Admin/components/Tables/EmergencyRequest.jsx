@@ -10,7 +10,7 @@ const EmergencyRequests = ({ emergency }) => {
   const locationMarkLat = emergency.map((item) => item.latitude);
   const locationMarkLong = emergency.map((item) => item.longitude);
 
-  const [isSatellite, setIsSatellite] = useState(false);
+  const [isSatellite, setIsSatellite] = useState(true);
   const [selectedEmergeny, setSelectedEmergency] = useState(null);
 
   console.log("selected emergencies", selectedEmergeny);
