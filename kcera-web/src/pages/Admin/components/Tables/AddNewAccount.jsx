@@ -11,9 +11,9 @@ import {
   Radio,
   FormLabel,
 } from "@mui/material";
-import { GetDocTitle } from "../../../utils/hooks/useDocumentTitle";
+import { GetDocTitle } from "../../../../utils/hooks/useDocumentTitle";
 import React, { useState } from "react";
-import CreateNewAccount from "../API/CreateNewAccount";
+import CreateNewAccount from "../../API/CreateNewAccount";
 
 const NewAccount = () => {
   const [name, setName] = useState("");

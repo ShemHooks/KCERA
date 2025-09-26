@@ -1,0 +1,127 @@
+// src/context/DashboardContext.jsx
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+} from "react";
+import socket from "../../utils/API/socket";
+import GetPendingUserApi from "./API/GetPendingUserApi";
+import GetResidentsApi from "./API/GetResidentsApi";
+import GetRespondersApi from "./API/GetRespondersApi";
+import GetDriversApi from "./API/GetDriversApi";
+import GetEmergencyApi from "./API/GetEmergencyApi";
+import GetCurrentResponsesApi from "./API/GetCurrentResponsesApi";
+import ApproveUserApi from "./API/ApproveUserApi";
+import DeclineUsers from "./API/DeclineUsers";
+
+import { playAlarm, stopAlarm } from "../../utils/alarmAudio";
+
+const DashboardContext = createContext(null);
+
+export function useDashboard() {
+  return useContext(DashboardContext);
+}
+
+export function DashboardProvider({ children }) {
+  const [pendingUsers, setPendingUsers] = useState([]);
+  const [approveUsers, setApproveUsers] = useState([]);
+  const [responders, setResponders] = useState([]);
+  const [drivers, setDrivers] = useState([]);
+  const [emergencies, setEmergencies] = useState([]);
+  const [ongoingResponses, setOngoingResponses] = useState([]);
+
+  const prevLength = useRef(0);
+
+  // Pending Users
+  const handleGetPendingUsers = async () => {
+    const response = await GetPendingUserApi();
+    if (response.users) setPendingUsers(response.users);
+  };
+
+  // Approved Residents
+  const handleApprovedUsers = async () => {
+    const UserResponse = await GetResidentsApi();
+    if (UserResponse.users) setApproveUsers(UserResponse.users);
+  };
+
+  //  Responders
+  const handleResponders = async () => {
+    const respondersList = await GetRespondersApi();
+    if (respondersList.responders) setResponders(respondersList.responders);
+  };
+
+  //  Drivers
+  const handleDrivers = async () => {
+    const driversList = await GetDriversApi();
+    if (driversList.drivers) setDrivers(driversList.drivers);
+  };
+
+  //  Emergencies
+  const handleGetEmergency = async () => {
+    const emergencies = await GetEmergencyApi();
+    const emergencyData = emergencies.emergencies.data;
+
+    if (emergencyData.length > prevLength.current) playAlarm();
+    if (emergencyData.length === 0) stopAlarm();
+
+    prevLength.current = emergencyData.length;
+    setEmergencies(emergencyData);
+  };
+
+  //  Ongoing Responses
+  const handleGetResponses = async () => {
+    const responses = await GetCurrentResponsesApi();
+    setOngoingResponses(responses.data.data);
+  };
+
+  //  Register socket listeners once
+  useEffect(() => {
+    socket.on("PendingUser", handleGetPendingUsers);
+    socket.on("updatedResidents", handleApprovedUsers);
+    socket.on("userStatusUpdate", () => {
+      handleResponders();
+      handleDrivers();
+    });
+    socket.on("emergencyRequests", handleGetEmergency);
+    socket.on("responded", handleGetResponses);
+
+    // initial load
+    handleGetPendingUsers();
+    handleApprovedUsers();
+    handleResponders();
+    handleDrivers();
+    handleGetEmergency();
+    handleGetResponses();
+
+    return () => {
+      socket.off("PendingUser");
+      socket.off("updatedResidents");
+      socket.off("userStatusUpdate");
+      socket.off("emergencyRequests");
+      socket.off("responded");
+    };
+  }, []);
+
+  //  Actions
+  const approvePending = (id) => ApproveUserApi(id);
+  const declinePending = (id) => DeclineUsers(id);
+
+  const value = {
+    pendingUsers,
+    approveUsers,
+    responders,
+    drivers,
+    emergencies,
+    ongoingResponses,
+    approvePending,
+    declinePending,
+  };
+
+  return (
+    <DashboardContext.Provider value={value}>
+      {children}
+    </DashboardContext.Provider>
+  );
+}

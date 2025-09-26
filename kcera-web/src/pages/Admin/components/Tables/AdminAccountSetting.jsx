@@ -1,5 +1,5 @@
 import React from "react";
-import LogoutApi from "../API/LogoutApi";
+import LogoutApi from "../../API/LogoutApi";
 import { Navigate, useNavigate } from "react-router-dom";
 
 const AdminAccountSetting = () => {

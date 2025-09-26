@@ -144,11 +144,22 @@ class EmergencyRequestController extends BaseController
             'message' => "A new {$request->request_type} emergency has been reported. Stay alert and safe.",
         ]);
 
+
+        $logs = [
+            'user_id' => $user['id'],
+            'user_role' => $user['role'],
+            'action' => 'Submitted an emergency request'
+        ];
+
+        $this->insertSystemLogs($logs);
+
         return $this->sendResponse(['photo_url' => $publicUrl], 'Emergency request submitted successfully.');
     }
 
     public function verifyEmergency(string $id): JsonResponse
     {
+
+        $user = Auth::user();
         $emergencyRecord = EmergencyReport::find($id);
 
         if (!$emergencyRecord) {
@@ -169,11 +180,20 @@ class EmergencyRequestController extends BaseController
             'message' => "Your reported incident on {$emergencyRecord->created_at->format('F j, Y g:i A')} has been verified by the dispatcher. Response in progress",
         ]);
 
+        $logs = [
+            'user_id' => $user['id'],
+            'user_role' => $user['role'],
+            'action' => "Verified an emergency request ( id: $id )"
+        ];
+
+        $this->insertSystemLogs($logs);
+
         return $this->sendResponse([], 'Verified Successfully');
     }
 
     public function rejectEmergency(string $id): JsonResponse
     {
+        $user = Auth::user();
         $emergencyRecord = EmergencyReport::find($id);
 
         if (!$emergencyRecord) {
@@ -193,6 +213,15 @@ class EmergencyRequestController extends BaseController
             'title' => "Emergency Reported Rejected",
             'message' => "Your reported incident on {$emergencyRecord->created_at->format('F j, Y g:i A')} has been rejected by the dispatcher.",
         ]);
+
+
+        $logs = [
+            'user_id' => $user['id'],
+            'user_role' => $user['role'],
+            'action' => "Rejected an emergency request ( id: $id )"
+        ];
+
+        $this->insertSystemLogs($logs);
 
         return $this->sendResponse([], 'Rejected Successfully');
     }

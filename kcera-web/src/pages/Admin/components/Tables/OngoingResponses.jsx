@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet-routing-machine";
 import "leaflet/dist/leaflet.css";
+import { useDashboard } from "../../DashboardContext";
 
 const toNumber = (val) => (typeof val === "string" ? parseFloat(val) : val);
 
@@ -68,28 +69,28 @@ const RoutingControl = ({ from, to, setRouteInfo }) => {
   return null;
 };
 
-const OngoingResponses = ({ data }) => {
-  console.log("ongoing response data", data);
+const OngoingResponses = () => {
+  const { ongoingResponses } = useDashboard();
 
   const [routeInfo, setRouteInfo] = useState(null);
   const [from, setFrom] = useState(null);
   const [to, setTo] = useState(null);
 
   useEffect(() => {
-    if (!data || data.length === 0) return;
+    if (!ongoingResponses || ongoingResponses.length === 0) return;
 
-    const fromCoords = data.map((item) => [
+    const fromCoords = ongoingResponses.map((item) => [
       item.current_latitude,
       item.current_longitude,
     ]);
-    const toCoords = data.map((item) => [
+    const toCoords = ongoingResponses.map((item) => [
       item.report.latitude,
       item.report.longitude,
     ]);
 
     setFrom(fromCoords[0]);
     setTo(toCoords[0]);
-  }, [data]);
+  }, [ongoingResponses]);
 
   console.log("from", from);
   console.log("to", to);

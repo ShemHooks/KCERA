@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { GetDocTitle } from "../../../../utils/hooks/useDocumentTitle";
+import { useDashboard } from "../../DashboardContext";
 
-const RespondersTable = ({ responders }) => {
+const RespondersTable = () => {
+  const { responders } = useDashboard();
+
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
 

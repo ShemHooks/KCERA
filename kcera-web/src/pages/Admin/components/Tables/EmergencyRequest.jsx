@@ -5,10 +5,13 @@ import L from "leaflet";
 import RequestDetails from "./RequestDetails";
 import { GetDocTitle } from "./../../../../utils/hooks/useDocumentTitle";
 import { stopAlarm } from "../../../../utils/alarmAudio";
+import { useDashboard } from "../../DashboardContext";
 
-const EmergencyRequests = ({ emergency }) => {
-  const locationMarkLat = emergency.map((item) => item.latitude);
-  const locationMarkLong = emergency.map((item) => item.longitude);
+const EmergencyRequests = () => {
+  const { emergencies } = useDashboard();
+
+  // const locationMarkLat = emergency.map((item) => item.latitude);
+  // const locationMarkLong = emergency.map((item) => item.longitude);
 
   const [isSatellite, setIsSatellite] = useState(true);
   const [selectedEmergeny, setSelectedEmergency] = useState(null);
@@ -47,7 +50,7 @@ const EmergencyRequests = ({ emergency }) => {
             attribution="&copy; OpenStreetMap contributors | &copy; Esri Imagery"
           />
 
-          {emergency.map((item, index) => (
+          {emergencies.map((item, index) => (
             <Marker
               key={index}
               position={[parseFloat(item.latitude), parseFloat(item.longitude)]}

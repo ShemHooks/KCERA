@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
+use App\Models\SysetmLogs;
 
 class BaseController extends Controller
 {
@@ -19,7 +20,16 @@ class BaseController extends Controller
         }
     }
 
-
+    public function insertSystemLogs(array $data)
+    {
+        try {
+            $logs = SysetmLogs::create($data);
+            return $logs;
+        } catch (\Exception $e) {
+            \Log::error("Recording Logs Error", $e->getMessage());
+            return null;
+        }
+    }
 
     public function sendResponse($result = null, $message)
     {

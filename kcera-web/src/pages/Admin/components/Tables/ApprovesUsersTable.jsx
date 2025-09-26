@@ -1,13 +1,16 @@
 import { GetDocTitle } from "../../../../utils/hooks/useDocumentTitle";
 import { useState } from "react";
+import { useDashboard } from "../../DashboardContext";
 
-const Approveduserstable = ({ resident }) => {
+const Approveduserstable = () => {
+  const { approveUsers } = useDashboard();
+
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.ceil(resident.length / rowsPerPage);
+  const totalPages = Math.ceil(approveUsers.length / rowsPerPage);
 
-  const paginatedResidents = resident.slice(
+  const paginatedResidents = approveUsers.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
@@ -30,13 +33,14 @@ const Approveduserstable = ({ resident }) => {
               <option>Sort by</option>
               <option>Name (A-Z)</option>
               <option>Name (Z-A)</option>
-              <option>Email</option>
+              <option>Newest at the top</option>
+              <option>Oldest at the top</option>
             </select>
 
             <select className="px-3 py-2 text-white rounded-md bg-slate-800">
               <option>Filter by</option>
-              <option>With Contact No.</option>
-              <option>No Contact No.</option>
+              <option>Engaged</option>
+              <option>Not engaged</option>
             </select>
 
             <input

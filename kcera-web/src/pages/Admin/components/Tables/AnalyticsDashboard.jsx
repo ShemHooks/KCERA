@@ -17,7 +17,7 @@ import {
   getByType,
   getMonthly,
   getTopUsers,
-} from "./../API/AnalyticApi";
+} from "../../API/AnalyticApi";
 
 const COLORS = ["#FF8C00", "#00E5FF", "#555555", "#FF5252"];
 
@@ -35,7 +35,7 @@ export default function AnalyticsDashboard() {
   }, []);
 
   return (
-    <div className="min-h-screen p-6 text-white bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+    <div className="h-screen p-6 overflow-scroll text-white bg-gradient-to-br from-gray-900 via-gray-800 to-black">
       {" "}
       {/* Summary Cards */}
       <div className="grid grid-cols-1 gap-6 mb-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
@@ -137,6 +137,9 @@ export default function AnalyticsDashboard() {
             </li>
           ))}
         </ul>
+      </div>
+      <div className="p-6 mt-6 mb-1 border border-gray-700 shadow-lg cursor-pointer rounded-2xl bg-black/40 backdrop-blur-md hover:border-blue-100">
+        <button>Generate Report</button>
       </div>
     </div>
   );

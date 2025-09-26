@@ -86,9 +86,20 @@ class AuthController extends BaseController
             $success['role'] = $user->role;
             $success['required_change_pass'] = $user->required_change_pass;
 
+
+            $logs = [
+                'user_id' => $user['id'],
+                'user_role' => $user['role'],
+                'action' => 'User Login'
+            ];
+
+            $this->insertSystemLogs($logs);
+
             return $this->sendResponse($success, 'User Login Successfully');
 
         }
+
+
 
         return $this->sendError('Unauthorized', ['error' => 'invalid credentials']);
 
@@ -96,6 +107,8 @@ class AuthController extends BaseController
 
     public function registerEmployees(Request $request): JsonResponse
     {
+        $admin = Auth::user();
+
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
@@ -118,6 +131,14 @@ class AuthController extends BaseController
         $user = User::create($input);
 
         Mail::to($user->email)->send(new SendTemporaryPassword($user->name, $temp_password));
+
+        $logs = [
+            'user_id' => $admin['id'],
+            'user_role' => $admin['role'],
+            'action' => 'Created an Account'
+        ];
+
+        $this->insertSystemLogs($logs);
 
         return $this->sendResponse([], 'User Created Succefully');
     }
@@ -148,6 +169,14 @@ class AuthController extends BaseController
         $user->password_changed_date = now();
         $user->save();
 
+        $logs = [
+            'user_id' => $user['id'],
+            'user_role' => $user['role'],
+            'action' => 'Updated Password'
+        ];
+
+        $this->insertSystemLogs($logs);
+
         return $this->sendResponse(null, 'Password changed successfully.');
     }
 
@@ -163,6 +192,14 @@ class AuthController extends BaseController
         $user->save();
 
         $user->currentAccessToken()->delete();
+
+        $logs = [
+            'user_id' => $user['id'],
+            'user_role' => $user['role'],
+            'action' => 'User Logout'
+        ];
+
+        $this->insertSystemLogs($logs);
 
         return $this->sendResponse(null, "User logged out successfully");
     }

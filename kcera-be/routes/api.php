@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\api\SystemLogsControllers;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\UserManagementController;
@@ -7,6 +8,7 @@ use App\Http\Controllers\api\EmergencyRequestController;
 use App\Http\Controllers\api\EmergencyResponseController;
 use App\Http\Controllers\api\NotificationController;
 use App\Http\Controllers\api\AnalyticsController;
+
 
 Route::controller(AuthController::class)->prefix('auth')->group(function () {
     Route::post('register', 'register');
@@ -23,6 +25,7 @@ Route::middleware(['auth:sanctum'])->prefix('user')->group(function () {
         Route::controller(UserManagementController::class)->group(function () {
             Route::get('list', 'index');
             Route::post('approve/{id}', 'approveUser');
+            Route::post('reject/{id}', 'rejectUser');
         });
     });
 
@@ -79,4 +82,13 @@ Route::controller(AnalyticsController::class)->prefix('analytics')->group(functi
     Route::get('monthly', 'monthly');
     Route::get('/top-user', 'topUsers');
 
+});
+
+Route::controller(SystemLogsControllers::class)->prefix('logs')->group(function () {
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::middleware('admin.only')->prefix('admin.only')->group(function () {
+            Route::get('retrives.logs', 'index');
+            Route::post('delete.log', 'deleteLogs');
+        });
+    });
 });

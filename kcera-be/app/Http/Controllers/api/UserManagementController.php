@@ -61,6 +61,7 @@ class UserManagementController extends BaseController
 
     public function approveUser(Request $request, string $id): JsonResponse
     {
+        $admin = Auth::user();
         $user = User::find($id);
 
         if (!$user) {
@@ -76,12 +77,22 @@ class UserManagementController extends BaseController
 
 
         Mail::to($user->email)->send(new ApprovalMail($user->name));
+
+        $logs = [
+            'user_id' => $admin['id'],
+            'user_role' => $admin['role'],
+            'action' => "Approved user registration ( id: $user->id )"
+        ];
+
+        $this->insertSystemLogs($logs);
+
         return $this->sendResponse([], 'User approved successfully');
 
     }
 
     public function rejectUser(Request $request, string $id): JsonResponse
     {
+        $admin = Auth::user();
         $user = User::find($id);
 
         if (!$user) {
@@ -94,6 +105,15 @@ class UserManagementController extends BaseController
 
         $user->approval_status = 'rejected';
         $user->save();
+
+
+        $logs = [
+            'user_id' => $admin['id'],
+            'user_role' => $admin['role'],
+            'action' => "Rejected user registration ( id: $user->id )"
+        ];
+
+        $this->insertSystemLogs($logs);
 
         return $this->sendResponse([], 'User rejected successfully');
     }

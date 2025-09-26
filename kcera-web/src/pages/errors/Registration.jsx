@@ -5,11 +5,13 @@ const Registration = () => {
 
   return (
     <>
-      <div className="bg-white md:bg-gray-300 min-h-screen w-screen flex items-center justify-center overflow-hidden">
-        <div className="p-10 rounded-md md:bg-white max-w-md w-full mx-4 md:mx-auto shadow-2xl shadow-black/50 relative">
+      <div className="flex items-center justify-center w-screen min-h-screen overflow-hidden text-white bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+        {" "}
+        {/*bg-white md:bg-gray-300 */}
+        <div className="relative w-full max-w-md p-10 mx-4 rounded-md shadow-2xl bg-black/30 backdrop-blur-sm shadow-black/50">
           <button
             onClick={handleBack}
-            className="absolute top-4 left-4 text-gray-600 hover:text-black"
+            className="absolute top-4 left-4 hover:text-red-500"
           >
             <p>🡸</p>
           </button>
@@ -18,12 +20,12 @@ const Registration = () => {
             <img
               src="/images/KCERA.png"
               alt="KCERA Logo"
-              className="min-h-15 max-h-20 mx-auto"
+              className="mx-auto min-h-15 max-h-20"
             />
           </div>
 
-          <div className="w-full text-center mt-6">
-            <h2 className="text-xl font-semibold mb-2">Dear Kabankalanon,</h2>
+          <div className="w-full mt-6 text-center">
+            <h2 className="mb-2 text-xl font-semibold">Dear Kabankalanon,</h2>
             <p className="mb-3">
               All registrations must be completed through the mobile version of
               the KCERA app. Please download and install the app from the Google
@@ -33,7 +35,7 @@ const Registration = () => {
               We apologize for any inconvenience this may cause and appreciate
               your understanding.
             </p>
-            <p className="font-semibold mt-6">The KCERA Development Team</p>
+            <p className="mt-6 font-semibold">The KCERA Development Team</p>
           </div>
         </div>
       </div>

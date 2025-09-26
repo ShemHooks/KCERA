@@ -1,53 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Eye, Trash2 } from "lucide-react";
+import SystemLogsApi from "./../../API/SystemLogsApi";
 
 export default function SystemLogs() {
-  const [logs] = useState([
-    {
-      date: "10/06, 9:01 AM",
-      user: "jdoe",
-      role: "Administrator",
-      action: "User login",
-      status: "Success",
-    },
-    {
-      date: "10/06, 6:58 AM",
-      user: "asmith",
-      role: "Driver",
-      action: "Data export",
-      status: "Failed",
-    },
-    {
-      date: "10/06, 2:19 PM",
-      user: "bwilliams",
-      role: "Resident",
-      action: "System update",
-      status: "Pending",
-    },
-    {
-      date: "10/06, 2:38 AM",
-      user: "morgam1",
-      role: "Responder",
-      action: "Incident response",
-      status: "Success",
-    },
-    {
-      date: "10/06, 5:08 AM",
-      user: "bwilliams",
-      role: "Resident",
-      action: "Configuration change",
-      status: "Failed",
-    },
-    {
-      date: "10/06, 6:24 PM",
-      user: "bwilliams",
-      role: "Responder",
-      action: "Active operator",
-      status: "Pending",
-    },
-    // Add more sample logs for testing
-  ]);
-
+  const [logs, setLogs] = useState([]);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -60,7 +16,7 @@ export default function SystemLogs() {
 
   const handleRowsChange = (e) => {
     setRowsPerPage(Number(e.target.value));
-    setCurrentPage(1); // reset to first page when rows change
+    setCurrentPage(1);
   };
 
   return (
@@ -82,16 +38,15 @@ export default function SystemLogs() {
             <option>Supervisor</option>
             <option>Responder</option>
           </select>
+
           <select className="px-3 py-2 text-white rounded-md bg-slate-800">
-            <option>Action type</option>
-            <option>User Login</option>
-            <option>Data Export</option>
-            <option>System Update</option>
+            <option>Visible</option>
+            <option>Hidden</option>
           </select>
           <input
             type="text"
             placeholder="Search..."
-            className="px-3 py-2 text-white rounded-md bg-slate-800 w-60"
+            className="px-3 py-2 text-white rounded-md bg-slate-800 w-70"
           />
         </div>
 

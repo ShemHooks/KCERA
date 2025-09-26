@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { GetDocTitle } from "../../../../utils/hooks/useDocumentTitle";
+import { useDashboard } from "../../DashboardContext";
 
-const PendingAccounts = ({ users, approvePending, declinePending }) => {
+const PendingAccounts = () => {
+  const { pendingUsers, approvePending, declinePending } = useDashboard();
+
   const [open, setOpen] = useState(false);
   const [modalImage, setModalImage] = useState("");
 
@@ -15,9 +18,9 @@ const PendingAccounts = ({ users, approvePending, declinePending }) => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.ceil(users.length / rowsPerPage);
+  const totalPages = Math.ceil(pendingUsers.length / rowsPerPage);
 
-  const paginatedUsers = users.slice(
+  const paginatedUsers = pendingUsers.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );

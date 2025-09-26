@@ -54,6 +54,14 @@ class EmergencyResponseController extends BaseController
             $existing->current_longitude = $request->current_longitude;
             $existing->save();
 
+            $logs = [
+                'user_id' => $user['id'],
+                'user_role' => $user['role'],
+                'action' => "Changed emergency request to respond ( id: $request->request_id )"
+            ];
+
+            $this->insertSystemLogs($logs);
+
             return $this->sendResponse([], 'Responding to another emergency');
 
         }
@@ -65,6 +73,15 @@ class EmergencyResponseController extends BaseController
             'current_longitude' => $request->current_longitude,
             'request_status' => 'in_transit',
         ]);
+
+        $logs = [
+            'user_id' => $user['id'],
+            'user_role' => $user['role'],
+            'action' => "Responded to a verified emergency request ( id: $request->request_id )"
+        ];
+
+        $this->insertSystemLogs($logs);
+
         return $this->sendResponse($response, 'Responding to Emergency');
 
     }

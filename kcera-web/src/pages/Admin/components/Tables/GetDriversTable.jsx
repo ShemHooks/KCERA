@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { GetDocTitle } from "../../../../utils/hooks/useDocumentTitle";
+import { useDashboard } from "../../DashboardContext";
 
-const DriversTable = ({ drivers }) => {
+const DriversTable = () => {
+  const { drivers } = useDashboard();
+
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
 
