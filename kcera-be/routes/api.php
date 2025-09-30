@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\api\SystemLogsControllers;
+use App\Http\Controllers\api\HistoryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\UserManagementController;
@@ -8,7 +8,7 @@ use App\Http\Controllers\api\EmergencyRequestController;
 use App\Http\Controllers\api\EmergencyResponseController;
 use App\Http\Controllers\api\NotificationController;
 use App\Http\Controllers\api\AnalyticsController;
-
+use App\Http\Controllers\api\SystemLogsControllers;
 
 Route::controller(AuthController::class)->prefix('auth')->group(function () {
     Route::post('register', 'register');
@@ -88,7 +88,16 @@ Route::controller(SystemLogsControllers::class)->prefix('logs')->group(function 
     Route::middleware('auth:sanctum')->group(function () {
         Route::middleware('admin.only')->prefix('admin.only')->group(function () {
             Route::get('retrives.logs', 'index');
-            Route::post('delete.log', 'deleteLogs');
+            Route::post('delete.log{id}', 'deleteLogs');
         });
+    });
+
+
+
+});
+
+Route::controller(HistoryController::class)->prefix('history')->group(function () {
+    Route::middleware(['auth:sanctum', 'admin.only'])->group(function () {
+        Route::get('get', 'index');
     });
 });

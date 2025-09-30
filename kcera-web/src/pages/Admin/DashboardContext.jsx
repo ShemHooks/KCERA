@@ -15,6 +15,8 @@ import GetEmergencyApi from "./API/GetEmergencyApi";
 import GetCurrentResponsesApi from "./API/GetCurrentResponsesApi";
 import ApproveUserApi from "./API/ApproveUserApi";
 import DeclineUsers from "./API/DeclineUsers";
+import SystemLogsApi from "./API/SystemLogsApi";
+import DeleteLogsApi from "./API/DeleteLogsApi";
 
 import { playAlarm, stopAlarm } from "../../utils/alarmAudio";
 
@@ -31,6 +33,7 @@ export function DashboardProvider({ children }) {
   const [drivers, setDrivers] = useState([]);
   const [emergencies, setEmergencies] = useState([]);
   const [ongoingResponses, setOngoingResponses] = useState([]);
+  const [systemLogs, setSystemLogs] = useState([]);
 
   const prevLength = useRef(0);
 
@@ -76,7 +79,40 @@ export function DashboardProvider({ children }) {
     setOngoingResponses(responses.data.data);
   };
 
+  //system logs
+  const handleGetSystemLogs = async (filters = {}) => {
+    try {
+      const response = await SystemLogsApi(filters);
+      if (response.data) {
+        setSystemLogs(response.data);
+      }
+    } catch (err) {
+      setSystemLogs([]);
+    }
+  };
+
+  //delete system logs
+  const deleteLogs = async (id) => {
+    try {
+      const response = await DeleteLogsApi(id);
+      return response;
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   //  Register socket listeners once
+
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log("Connected to socket server:", socket.id);
+    });
+
+    socket.on("disconnect", () => {
+      console.log("Disconnected from socket server");
+    });
+  }, []);
+
   useEffect(() => {
     socket.on("PendingUser", handleGetPendingUsers);
     socket.on("updatedResidents", handleApprovedUsers);
@@ -86,6 +122,9 @@ export function DashboardProvider({ children }) {
     });
     socket.on("emergencyRequests", handleGetEmergency);
     socket.on("responded", handleGetResponses);
+    socket.on("logsUpdates", () => {
+      handleGetSystemLogs();
+    });
 
     // initial load
     handleGetPendingUsers();
@@ -94,6 +133,7 @@ export function DashboardProvider({ children }) {
     handleDrivers();
     handleGetEmergency();
     handleGetResponses();
+    handleGetSystemLogs();
 
     return () => {
       socket.off("PendingUser");
@@ -101,6 +141,7 @@ export function DashboardProvider({ children }) {
       socket.off("userStatusUpdate");
       socket.off("emergencyRequests");
       socket.off("responded");
+      socket.off("logsUpdates");
     };
   }, []);
 
@@ -115,8 +156,11 @@ export function DashboardProvider({ children }) {
     drivers,
     emergencies,
     ongoingResponses,
+    systemLogs,
+    handleGetSystemLogs,
     approvePending,
     declinePending,
+    deleteLogs,
   };
 
   return (

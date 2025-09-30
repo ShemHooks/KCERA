@@ -117,6 +117,12 @@ export default function Histories() {
             <option value="date-desc">Newest First</option>
             <option value="date-asc">Oldest First</option>
           </select>
+
+          <input
+            type="text"
+            placeholder="Search..."
+            className="px-3 py-2 text-white rounded-md bg-slate-800 w-70"
+          />
         </div>
 
         {/* Data List */}

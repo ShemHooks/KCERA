@@ -12,25 +12,24 @@ class SystemLogsControllers extends BaseController
     public function index(Request $request): JsonResponse
     {
         $keyword = $request->input('keyword');
-        $date_range = $request->input('date_range'); // expect array: [start, end]
+        $date_range = $request->input('date_range');
         $isHidden = $request->input('is_hidden');
         $user_role = $request->input('user_role');
 
-        $logs = SystemLogs::with('user')
+        $logs = SysetmLogs::with('users')
             ->when($isHidden !== null, function ($query) use ($isHidden) {
                 $query->where('is_hidden', $isHidden);
             })
             ->when($user_role, function ($query) use ($user_role) {
-                $query->whereHas('user', function ($q) use ($user_role) {
+                $query->whereHas('users', function ($q) use ($user_role) {
                     $q->where('role', $user_role);
                 });
             })
             ->when($keyword, function ($query) use ($keyword) {
                 $query->where(function ($q) use ($keyword) {
                     $q->where('action', 'like', "%$keyword%")
-                        ->orWhereHas('user', function ($uq) use ($keyword) {
-                            $uq->where('name', 'like', "%$keyword%")
-                                ->orWhere('email', 'like', "%$keyword%");
+                        ->orWhereHas('users', function ($uq) use ($keyword) {
+                            $uq->whereAny(['name', 'email'], 'like', "%$keyword%");
                         });
                 });
             })

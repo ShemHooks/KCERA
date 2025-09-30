@@ -8,7 +8,6 @@ const ApproveUserApi = async (id) => {
     const response = await axiosPrivateInstance.post(
       `api/user/admin.only/approve/${id}`
     );
-
     socket.emit("updateResidents");
     socket.emit("register");
     return response.data;

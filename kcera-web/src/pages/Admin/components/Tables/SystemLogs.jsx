@@ -1,15 +1,56 @@
 import { useState, useEffect } from "react";
 import { Eye, Trash2 } from "lucide-react";
-import SystemLogsApi from "./../../API/SystemLogsApi";
+import { useDashboard } from "../../DashboardContext";
+import dayjs from "dayjs";
+
+const getDateRange = (range) => {
+  const today = dayjs().endOf("day");
+
+  switch (range) {
+    case "today":
+      return {
+        start_date: today.format("YYYY-MM-DD"),
+        end_date: today.format("YYYY-MM-DD"),
+      };
+    case "week":
+      return {
+        start_date: dayjs()
+          .subtract(7, "day")
+          .startOf("day")
+          .format("YYYY-MM-DD"),
+        end_date: today.format("YYYY-MM-DD"),
+      };
+    case "month":
+      return {
+        start_date: dayjs()
+          .subtract(1, "month")
+          .startOf("day")
+          .format("YYYY-MM-DD"),
+        end_date: today.format("YYYY-MM-DD"),
+      };
+    default:
+      return { start_date: null, end_date: null };
+  }
+};
 
 export default function SystemLogs() {
-  const [logs, setLogs] = useState([]);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.ceil(logs.length / rowsPerPage);
+  const [filters, setFilters] = useState({
+    keyword: "",
+    date_range: null,
+    start_date: null,
+    end_date: null,
+    is_hidden: false,
+    user_role: "",
+  });
 
-  const paginatedLogs = logs.slice(
+  const { systemLogs, handleGetSystemLogs, deleteLogs } = useDashboard();
+
+  const totalPages = Math.ceil(systemLogs.length / rowsPerPage);
+
+  const paginatedLogs = systemLogs.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
@@ -19,6 +60,11 @@ export default function SystemLogs() {
     setCurrentPage(1);
   };
 
+  useEffect(() => {
+    handleGetSystemLogs(filters);
+    setCurrentPage(1);
+  }, [filters]);
+
   return (
     <div className="flex min-h-screen text-white bg-gradient-to-br from-gray-900 via-gray-800 to-black">
       <main className="flex-1 p-6">
@@ -26,26 +72,46 @@ export default function SystemLogs() {
 
         {/* Filters */}
         <div className="flex flex-wrap gap-4 mb-6">
-          <select className="px-3 py-2 text-white rounded-md bg-slate-800">
-            <option>Date range</option>
-            <option>Today</option>
-            <option>This Week</option>
-            <option>This Month</option>
-          </select>
-          <select className="px-3 py-2 text-white rounded-md bg-slate-800">
-            <option>User role</option>
-            <option>Administrator</option>
-            <option>Supervisor</option>
-            <option>Responder</option>
+          <select
+            className="px-3 py-2 text-white rounded-md bg-slate-800"
+            value={filters.date_range || ""}
+            onChange={(e) => {
+              const value = e.target.value;
+              const range = getDateRange(value);
+              setFilters({
+                ...filters,
+                date_range: value,
+                start_date: range.start_date,
+                end_date: range.end_date,
+              });
+            }}
+          >
+            <option value="">Date range</option>
+            <option value="today">Today</option>
+            <option value="week">This Week</option>
+            <option value="month">This Month</option>
           </select>
 
-          <select className="px-3 py-2 text-white rounded-md bg-slate-800">
-            <option>Visible</option>
-            <option>Hidden</option>
+          <select
+            className="px-3 py-2 text-white rounded-md bg-slate-800"
+            value={filters.user_role}
+            onChange={(e) =>
+              setFilters({ ...filters, user_role: e.target.value })
+            }
+          >
+            <option value="">User role</option>
+            <option value="admin">Administrator</option>
+            <option value="drivers">Drivers</option>
+            <option value="responders">Responder</option>
           </select>
+
           <input
             type="text"
             placeholder="Search..."
+            value={filters.keyword}
+            onChange={(e) =>
+              setFilters({ ...filters, keyword: e.target.value })
+            }
             className="px-3 py-2 text-white rounded-md bg-slate-800 w-70"
           />
         </div>
@@ -63,15 +129,20 @@ export default function SystemLogs() {
               </tr>
             </thead>
             <tbody>
-              {paginatedLogs.map((log, idx) => (
+              {paginatedLogs.map((logs, idx) => (
                 <tr key={idx} className="border-b border-slate-800">
-                  <td className="py-2">{log.date}</td>
-                  <td>{log.user}</td>
-                  <td>{log.role}</td>
-                  <td>{log.action}</td>
+                  <td className="py-2">
+                    {dayjs(logs.created_at).format("MMM D, YYYY h:mm A")}
+                  </td>
+                  <td>{logs.users.name}</td>
+                  <td>{logs.users.role}</td>
+                  <td>{logs.action}</td>
                   <td className="flex justify-center gap-3 py-2">
-                    <Eye className="w-4 h-4 cursor-pointer hover:text-blue-400" />
-                    <Trash2 className="w-4 h-4 cursor-pointer hover:text-red-400" />
+                    p
+                    <Trash2
+                      className="w-4 h-4 cursor-pointer hover:text-red-400"
+                      onClick={() => deleteLogs(logs.id)}
+                    />
                   </td>
                 </tr>
               ))}
