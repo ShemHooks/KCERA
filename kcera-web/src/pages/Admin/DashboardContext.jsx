@@ -17,6 +17,13 @@ import ApproveUserApi from "./API/ApproveUserApi";
 import DeclineUsers from "./API/DeclineUsers";
 import SystemLogsApi from "./API/SystemLogsApi";
 import DeleteLogsApi from "./API/DeleteLogsApi";
+import HistoryApi from "./API/HistoryApi";
+import {
+  getSummary,
+  getByType,
+  getMonthly,
+  getTopUsers,
+} from "./API/AnalyticApi";
 
 import { playAlarm, stopAlarm } from "../../utils/alarmAudio";
 
@@ -34,6 +41,13 @@ export function DashboardProvider({ children }) {
   const [emergencies, setEmergencies] = useState([]);
   const [ongoingResponses, setOngoingResponses] = useState([]);
   const [systemLogs, setSystemLogs] = useState([]);
+  const [responseHistory, setResponseHistory] = useState([]);
+  const [reportHistory, setReportHistory] = useState([]);
+  const [summary, setSummary] = useState({});
+  const [byType, setByType] = useState([]);
+  const [monthly, setMonthly] = useState([]);
+  const [topUsers, setTopUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const prevLength = useRef(0);
 
@@ -101,6 +115,43 @@ export function DashboardProvider({ children }) {
     }
   };
 
+  //get histories
+  const handleGetHistory = async (keyword) => {
+    try {
+      const response = await HistoryApi(keyword);
+
+      if (response.responses && response.reports) {
+        setResponseHistory(response.responses);
+        setReportHistory(response.reports);
+        return;
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  //analytics
+
+  const fetchData = async () => {
+    try {
+      const [summaryRes, byTypeRes, monthlyRes, topUsersRes] =
+        await Promise.all([
+          getSummary(),
+          getByType(),
+          getMonthly(),
+          getTopUsers(),
+        ]);
+      setSummary(summaryRes.data.data);
+      setByType(byTypeRes.data.data);
+      setMonthly(monthlyRes.data.data);
+      setTopUsers(topUsersRes.data.data);
+    } catch (error) {
+      console.error("Failed to fetch analytics data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   //  Register socket listeners once
 
   useEffect(() => {
@@ -134,6 +185,7 @@ export function DashboardProvider({ children }) {
     handleGetEmergency();
     handleGetResponses();
     handleGetSystemLogs();
+    fetchData();
 
     return () => {
       socket.off("PendingUser");
@@ -157,10 +209,18 @@ export function DashboardProvider({ children }) {
     emergencies,
     ongoingResponses,
     systemLogs,
+    responseHistory,
+    reportHistory,
+    summary,
+    byType,
+    monthly,
+    topUsers,
+    loading,
     handleGetSystemLogs,
     approvePending,
     declinePending,
     deleteLogs,
+    handleGetHistory,
   };
 
   return (

@@ -13,10 +13,10 @@ class HistoryController extends BaseController
     public function index(Request $request): JsonResponse
     {
         $keyword = $request->input('keyword');
-        $sort = $request->input('sort', 'desc');
 
         // ---- Reports ----
         $reports = EmergencyReport::with('user')
+            ->where('request_status', 'verified')
             ->when($keyword, function ($query) use ($keyword) {
                 $query->where(function ($q) use ($keyword) {
                     $q->where('request_type', 'like', "%$keyword%")
@@ -26,7 +26,7 @@ class HistoryController extends BaseController
                         });
                 });
             })
-            ->orderBy('created_at', $sort)
+            ->orderBy('created_at', 'desc')
             ->get();
 
         // ---- Responses ----
@@ -46,7 +46,7 @@ class HistoryController extends BaseController
                         });
                 });
             })
-            ->orderBy('created_at', $sort)
+            ->orderBy('created_at', 'desc')
             ->get();
 
         if ($reports->isEmpty() && $responses->isEmpty()) {
