@@ -28,12 +28,12 @@ def kill_port(port):
         print(f"No process found on port {port}.")
 
 # Kill ports before starting
-kill_port(LARAVEL_PORT)
+kill_port(LARAVEL_PORT)           
 kill_port(SOCKET_PORT)
 kill_port(REACT_PORT)
 
 print("Starting Laravel backend...")
-laravel = subprocess.Popen("php artisan serve --host=0.0.0.0 --port=8000", cwd=LARAVEL_PATH, shell=True)
+laravel = subprocess.Popen("start cmd /k php artisan serve --host=0.0.0.0 --port=8000", cwd=LARAVEL_PATH, shell=True)
 
 print("Starting Socket server...")
 socket = subprocess.Popen("node server.js", cwd=SOCKET_PATH, shell=True)

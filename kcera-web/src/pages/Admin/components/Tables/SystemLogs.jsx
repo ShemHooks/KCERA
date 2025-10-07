@@ -138,7 +138,6 @@ export default function SystemLogs() {
                   <td>{logs.users.role}</td>
                   <td>{logs.action}</td>
                   <td className="flex justify-center gap-3 py-2">
-                    p
                     <Trash2
                       className="w-4 h-4 cursor-pointer hover:text-red-400"
                       onClick={() => deleteLogs(logs.id)}

@@ -18,6 +18,7 @@ import DeclineUsers from "./API/DeclineUsers";
 import SystemLogsApi from "./API/SystemLogsApi";
 import DeleteLogsApi from "./API/DeleteLogsApi";
 import HistoryApi from "./API/HistoryApi";
+import ExcelDataApi from "./API/ExcelDataApi";
 import {
   getSummary,
   getByType,
@@ -152,6 +153,19 @@ export function DashboardProvider({ children }) {
     }
   };
 
+  //getting data to be exported as excel file
+  const exportExcelFile = async (date) => {
+    try {
+      const responseFromApi = await ExcelDataApi(date);
+
+      return {
+        data: responseFromApi,
+      };
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   //  Register socket listeners once
 
   useEffect(() => {
@@ -221,6 +235,7 @@ export function DashboardProvider({ children }) {
     declinePending,
     deleteLogs,
     handleGetHistory,
+    exportExcelFile,
   };
 
   return (

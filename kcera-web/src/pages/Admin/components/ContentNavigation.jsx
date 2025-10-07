@@ -13,6 +13,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import HistoryIcon from "@mui/icons-material/History";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
+import FeedbackIcon from "@mui/icons-material/Feedback";
 export const NAVIGATION = [
   {
     kind: "header",
@@ -93,6 +94,11 @@ export const NAVIGATION = [
     segment: "history",
     title: "History",
     icon: <HistoryIcon />,
+  },
+  {
+    segment: "feedbacks",
+    title: "Feedbacks & Suggestions",
+    icon: <FeedbackIcon />,
   },
   {
     kind: "divider",

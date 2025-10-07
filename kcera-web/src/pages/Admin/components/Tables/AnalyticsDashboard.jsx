@@ -32,7 +32,7 @@ export default function AnalyticsDashboard() {
           </div>
         </>
       ) : (
-        <GenerateReport />
+        <GenerateReport onClosed={() => setButtonClick(false)} />
       )}
     </div>
   );
