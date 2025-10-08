@@ -6,6 +6,11 @@ use App\Models\Notification;
 use App\Http\Controllers\api\BaseController as BaseController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Validator;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+
+
 
 class NotificationController extends BaseController
 {
@@ -16,9 +21,13 @@ class NotificationController extends BaseController
                 ->where('receiver_type', 'reporter');
         })
             ->orWhere('receiver_type', 'everyone')
-            ->orderBy('created_by', 'desc')
+            ->orderBy('created_at', 'desc')
             ->get();
 
         return $this->sendResponse($notification, 'Notifications');
     }
+
 }
+
+
+

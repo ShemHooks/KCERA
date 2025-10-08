@@ -9,7 +9,8 @@ import { useDashboard } from "../../DashboardContext";
 export default function AnalyticsDashboard() {
   const [buttonClicked, setButtonClick] = useState(false);
 
-  const { loading, summary, byType, monthly, topUsers } = useDashboard();
+  const { loading, summary, byType, monthly, topUsers, fetchData } =
+    useDashboard();
 
   if (loading) {
     return <div className="p-6 text-white">Loading analytics...</div>;
@@ -20,13 +21,21 @@ export default function AnalyticsDashboard() {
       {!buttonClicked ? (
         <>
           <SummaryCards summary={summary} />
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            <ReportsPieChart data={byType} />
-            <MonthlyLineChart data={monthly} />
+          <div className="mb-4">
+            <div className="mb-4">
+              <h1 className="font-extrabold text-gray-500">Charts</h1>
+            </div>
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+              <ReportsPieChart data={byType} />
+              <MonthlyLineChart data={monthly} />
+            </div>
           </div>
           <TopUsers users={topUsers} />
           <div className="p-6 mt-6 mb-1 border border-gray-700 shadow-lg cursor-pointer rounded-2xl bg-black/40 backdrop-blur-md hover:border-blue-100">
-            <button onClick={() => setButtonClick(true)}>
+            <button
+              onClick={() => setButtonClick(true)}
+              className="w-full cursor-pointer"
+            >
               Generate Report
             </button>
           </div>

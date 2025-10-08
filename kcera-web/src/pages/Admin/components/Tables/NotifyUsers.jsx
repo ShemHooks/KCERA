@@ -18,12 +18,9 @@ export default function NotifyUsers() {
   };
 
   return (
-    <div className="min-h-screen p-2 text-white bg-gradient-to-br from-gray-900 via-gray-800 to-black">
-      {/* Page Heading */}
+    <div className="p-2 text-white bg-gradient-to-br from-gray-900 via-gray-800 to-black">
       <h1 className="mt-6 ml-10 text-3xl text-white">Send Notification</h1>
-      <GetDocTitle title="KCERA: Send Notification" />
-
-      {/* Dark Panel */}
+      <GetDocTitle title="KCERA: Send Notification" />{" "}
       <div className="flex flex-col gap-4 p-6 mt-4 text-white rounded-lg shadow ">
         <form className="space-y-5">
           {/* Title */}
@@ -97,7 +94,7 @@ export default function NotifyUsers() {
           {formData.receiver_type === "user" && (
             <div>
               <label className="block mb-1 text-sm font-medium text-slate-300">
-                User ID
+                Receiver Email
               </label>
               <input
                 type="text"
@@ -105,7 +102,7 @@ export default function NotifyUsers() {
                 value={formData.receiver_id}
                 onChange={handleChange}
                 className="w-full p-3 text-sm border rounded-md bg-black/30 backdrop-blur-sm border-slate-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                placeholder="Enter user ID"
+                placeholder="Enter receiver email"
               />
             </div>
           )}

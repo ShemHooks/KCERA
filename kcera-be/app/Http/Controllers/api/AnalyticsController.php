@@ -6,6 +6,8 @@ use App\Models\EmergencyReport;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\api\BaseController;
+use Illuminate\Http\Request;
+
 
 class AnalyticsController extends BaseController
 {
@@ -23,9 +25,12 @@ class AnalyticsController extends BaseController
     }
 
 
-    public function byType(): JsonResponse
+    public function byType(Request $request): JsonResponse
     {
+        $date = $request['date'];
+
         $data = EmergencyReport::select('request_type', DB::raw('COUNT(*) as total'))
+            ->where('created_at', 'like', "%$date%")
             ->groupBy('request_type')
             ->get();
 

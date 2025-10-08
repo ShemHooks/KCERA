@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use App\Models\EmergencyReport;
 
 class EmergencyResponseController extends BaseController
 {
@@ -72,6 +73,19 @@ class EmergencyResponseController extends BaseController
             'current_latitude' => $request->current_latitude,
             'current_longitude' => $request->current_longitude,
             'request_status' => 'in_transit',
+        ]);
+
+
+        $emergency = EmergencyReport::find($request->request_id);
+
+        $this->notificationRecord([
+            'receiver_id' => $emergency->user_id,
+            'report_id' => $emergency->id,
+            'response_id' => $response->id,
+            'receiver_type' => 'reporter',
+            'type' => 'Response',
+            'title' => "Response is on the way",
+            'message' => "Your {$emergency->request_type} emergency reported on {$emergency->created_at->format('F j, Y g:i A')} has been picked up by responders. Click to track the response.",
         ]);
 
         $logs = [

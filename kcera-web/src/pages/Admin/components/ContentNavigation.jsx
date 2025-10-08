@@ -107,11 +107,11 @@ export const NAVIGATION = [
     kind: "header",
     title: "Setings",
   },
-  {
-    segment: "notifyUser",
-    title: "Notify Users",
-    icon: <NotificationsActiveIcon />,
-  },
+  // {
+  //   segment: "notifyUser",
+  //   title: "Notify Users",
+  //   icon: <NotificationsActiveIcon />,
+  // },
   {
     segment: "myAccount",
     title: "My Account",

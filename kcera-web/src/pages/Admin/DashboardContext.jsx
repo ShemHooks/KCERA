@@ -133,12 +133,12 @@ export function DashboardProvider({ children }) {
 
   //analytics
 
-  const fetchData = async () => {
+  const fetchData = async (date, type) => {
     try {
       const [summaryRes, byTypeRes, monthlyRes, topUsersRes] =
         await Promise.all([
           getSummary(),
-          getByType(),
+          getByType(date),
           getMonthly(),
           getTopUsers(),
         ]);
@@ -236,6 +236,7 @@ export function DashboardProvider({ children }) {
     deleteLogs,
     handleGetHistory,
     exportExcelFile,
+    fetchData,
   };
 
   return (

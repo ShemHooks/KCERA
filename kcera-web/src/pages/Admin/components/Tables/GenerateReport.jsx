@@ -7,7 +7,7 @@ import ExportExcel from "../../../../utils/files/ExportExcel";
 import { useDashboard } from "./../../DashboardContext";
 import Loader from "../../../../utils/loader";
 
-const GenerateReport = ({ onClicked }) => {
+const GenerateReport = ({ onClosed }) => {
   const [date, setDate] = useState(new Date());
   const [generatedFiles, setGeneratedFiles] = useState([]); // 🔹 multiple files
   const [isLoading, setIsLoading] = useState(false);
@@ -96,7 +96,7 @@ const GenerateReport = ({ onClicked }) => {
   return (
     <div>
       <div>
-        <button onClick={onClicked} className="cursor-pointer">
+        <button onClick={onClosed} className="cursor-pointer">
           <ArrowBackIcon style={{ verticalAlign: "middle" }} />
         </button>
       </div>

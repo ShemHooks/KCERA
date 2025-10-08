@@ -140,7 +140,7 @@ class EmergencyRequestController extends BaseController
             'response_id' => null,
             'receiver_type' => 'everyone',
             'type' => 'emergency',
-            'title' => "🚨 New {$request->request_type} Reported",
+            'title' => "🚨 New {$request->request_type} Reported!",
             'message' => "A new {$request->request_type} emergency has been reported. Stay alert and safe.",
         ]);
 
@@ -176,7 +176,7 @@ class EmergencyRequestController extends BaseController
             'response_id' => null,
             'receiver_type' => 'reporter',
             'type' => 'verified emergency',
-            'title' => "Emergency Reported Verified",
+            'title' => "Reported Emergency has been Verified",
             'message' => "Your reported incident on {$emergencyRecord->created_at->format('F j, Y g:i A')} has been verified by the dispatcher. Response in progress",
         ]);
 
@@ -210,7 +210,7 @@ class EmergencyRequestController extends BaseController
             'response_id' => null,
             'receiver_type' => 'reporter',
             'type' => 'rejected emergency',
-            'title' => "Emergency Reported Rejected",
+            'title' => "Reported Emergency has been Rejected",
             'message' => "Your reported incident on {$emergencyRecord->created_at->format('F j, Y g:i A')} has been rejected by the dispatcher.",
         ]);
 
