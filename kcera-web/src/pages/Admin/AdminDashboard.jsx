@@ -32,6 +32,7 @@ const AnalyticDashboard = lazy(
 const SystemLogs = lazy(() => import("./components/Tables/SystemLogs"));
 const NotifyUsers = lazy(() => import("./components/Tables/NotifyUsers"));
 const History = lazy(() => import("./components/Tables/History"));
+const Ai = lazy(() => import("./components/Tables/KCERAAIConsole"));
 
 function useDemoRouter(initialPath) {
   const [pathname, setPathname] = React.useState(initialPath);
@@ -118,6 +119,12 @@ const renderContent = (section) => {
       return (
         <Suspense fallback={<Loader />}>
           <History />
+        </Suspense>
+      );
+    case "ai":
+      return (
+        <Suspense fallback={<Loader />}>
+          <Ai />
         </Suspense>
       );
     default:

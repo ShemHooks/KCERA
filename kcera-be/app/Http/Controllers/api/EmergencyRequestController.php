@@ -177,7 +177,7 @@ class EmergencyRequestController extends BaseController
             'receiver_type' => 'reporter',
             'type' => 'verified emergency',
             'title' => "Reported Emergency has been Verified",
-            'message' => "Your reported incident on {$emergencyRecord->created_at->format('F j, Y g:i A')} has been verified by the dispatcher. Response in progress",
+            'message' => "Your reported incident on {$emergencyRecord->created_at->timezone('Asia/Manila')->format('F j, Y g:i A')} has been verified by the dispatcher. Response in progress",
         ]);
 
         $logs = [
@@ -211,7 +211,7 @@ class EmergencyRequestController extends BaseController
             'receiver_type' => 'reporter',
             'type' => 'rejected emergency',
             'title' => "Reported Emergency has been Rejected",
-            'message' => "Your reported incident on {$emergencyRecord->created_at->format('F j, Y g:i A')} has been rejected by the dispatcher.",
+            'message' => "Your reported incident on {$emergencyRecord->created_at->timezone('Asia/Manila')->format('F j, Y g:i A')} has been rejected by the dispatcher.",
         ]);
 
 

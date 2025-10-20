@@ -10,6 +10,7 @@ use App\Http\Controllers\api\NotificationController;
 use App\Http\Controllers\api\AnalyticsController;
 use App\Http\Controllers\api\SystemLogsControllers;
 use App\Http\Controllers\api\ExportReportController;
+use App\Http\Controllers\api\AiAnalysisController;
 
 Route::controller(AuthController::class)->prefix('auth')->group(function () {
     Route::post('register', 'register');
@@ -60,6 +61,7 @@ Route::controller(EmergencyResponseController::class)->prefix('emergency/respons
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('respond', 'createResponse');
+        Route::get('get/specific/{id}', 'trackSpecificResponse');
 
         Route::middleware('admin.only')->prefix('admin.only')->group(function () {
             Route::get('ongoing', 'index');
@@ -106,5 +108,11 @@ Route::controller(HistoryController::class)->prefix('history')->group(function (
 Route::controller(ExportReportController::class)->prefix('export-report')->group(function () {
     Route::middleware(['auth:sanctum', 'admin.only'])->group(function () {
         Route::get('retrieve', 'exportReport');
+    });
+});
+
+Route::controller(AiAnalysisController::class)->prefix('ai')->group(function () {
+    Route::middleware(['auth:sanctum', 'admin.only'])->group(function () {
+        Route::post('analyze', 'analyze');
     });
 });

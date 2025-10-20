@@ -8,6 +8,8 @@ const VerifyEmergencyApi = async (id) => {
     );
     socket.emit("emergencyRequest");
     socket.emit("EmergencyVerified");
+    socket.emit("notifyUser");
+
     return {
       response: response,
     };

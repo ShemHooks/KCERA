@@ -29,6 +29,8 @@ const SendRequestApi = async (pinnedLocation, requestType, requestPhoto) => {
     const response = await api.post("emergency/submit", formData);
 
     socket.emit("emergencyRequest");
+    socket.emit("notifyUser");
+
     return {
       success: response,
     };

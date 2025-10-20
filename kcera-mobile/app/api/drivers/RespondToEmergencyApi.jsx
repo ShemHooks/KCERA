@@ -15,6 +15,8 @@ const RespondToEmergencyApi = async (requestId, currentLocation) => {
 
     if (response) {
       socket.emit("respond");
+      socket.emit("notifyUser");
+
       return {
         result: response,
       };

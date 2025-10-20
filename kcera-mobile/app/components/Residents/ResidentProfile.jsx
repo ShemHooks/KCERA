@@ -14,11 +14,14 @@ import { useEffect, useState } from "react";
 // Api
 import LogoutApi from "../../api/authApi/LogoutApi";
 import GetUserInfoApi from "../../api/residents/GetUserInfoApi";
+import ROUTES from "../../constant/routes";
+import { router } from "expo-router";
 
 const defaultProfile = require("../../../assets/app-images/default-user.jpg");
 
 const ResidentProfile = () => {
   const [userName, setUserName] = useState("");
+  const [page, setPage] = useState(null);
 
   useEffect(() => {
     const userInfo = async () => {
@@ -43,6 +46,11 @@ const ResidentProfile = () => {
   const logOut = () => {
     LogoutApi();
   };
+
+  const goToAbout = () => {
+    router.replace(ROUTES.EVERYONE.ABOUT);
+  };
+
   return (
     <View>
       <View style={styles.tabs}></View>
@@ -126,7 +134,11 @@ const ResidentProfile = () => {
             </View>
           </TouchableOpacity>
           <View style={styles.tabs}></View>
-          <TouchableOpacity style={styles.button} className="pl-4">
+          <TouchableOpacity
+            onPress={goToAbout}
+            style={styles.button}
+            className="pl-4"
+          >
             <View>
               <FontAwesome5 name="info" size={24} color="#333" />
             </View>

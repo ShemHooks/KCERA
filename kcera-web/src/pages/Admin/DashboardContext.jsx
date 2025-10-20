@@ -19,6 +19,7 @@ import SystemLogsApi from "./API/SystemLogsApi";
 import DeleteLogsApi from "./API/DeleteLogsApi";
 import HistoryApi from "./API/HistoryApi";
 import ExcelDataApi from "./API/ExcelDataApi";
+import AiAnalysis from "./API/AiAnalysis";
 import {
   getSummary,
   getByType,
@@ -49,6 +50,7 @@ export function DashboardProvider({ children }) {
   const [monthly, setMonthly] = useState([]);
   const [topUsers, setTopUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [aiResponse, setAiResponse] = useState("");
 
   const prevLength = useRef(0);
 
@@ -166,6 +168,16 @@ export function DashboardProvider({ children }) {
     }
   };
 
+  // ai assistant
+  const aiResponsesFn = async (question) => {
+    try {
+      const aiResponseFromApi = await AiAnalysis(question);
+      setAiResponse(aiResponseFromApi.data.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   //  Register socket listeners once
 
   useEffect(() => {
@@ -230,6 +242,7 @@ export function DashboardProvider({ children }) {
     monthly,
     topUsers,
     loading,
+    aiResponse,
     handleGetSystemLogs,
     approvePending,
     declinePending,
@@ -237,6 +250,7 @@ export function DashboardProvider({ children }) {
     handleGetHistory,
     exportExcelFile,
     fetchData,
+    aiResponsesFn,
   };
 
   return (

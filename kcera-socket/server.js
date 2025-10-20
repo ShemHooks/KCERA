@@ -59,6 +59,10 @@ io.on("connection", (socket) => {
     io.emit("logsUpdates");
   });
 
+  socket.on("notifyUser", () => {
+    io.emit("userNotify");
+  });
+
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);
   });

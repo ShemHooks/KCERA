@@ -8,6 +8,7 @@ const RejectEmergencyApi = async (id) => {
       `api/emergency/admin.only/reject/${id}`
     );
     socket.emit("emergencyRequest");
+    socket.emit("notifyUser");
     return {
       response: response,
     };

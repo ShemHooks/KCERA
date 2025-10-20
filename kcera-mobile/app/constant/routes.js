@@ -6,6 +6,9 @@ const ROUTES = {
   DRIVER: {
     DASHBOARD: "/screens/drivers/Dashboard",
   },
+  EVERYONE: {
+    ABOUT: "/components/Residents/HomeScreen",
+  },
   AUTH: {
     LOGIN: "/screens/auth/HomeScreen",
     REGISTER: "/screens/auth/RegistrationScreen",

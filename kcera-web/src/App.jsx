@@ -18,15 +18,17 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/registration" element={<Registration />} />
           <Route path="/not/admin" element={<NotAdmin />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
 
           {/* routes with auth middleware */}
-          <Route element={<ProtectedRoutes />}>
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          </Route>
+          <Route element={<ProtectedRoutes />}></Route>
         </Routes>
       </Suspense>
     </BrowserRouter>
   );
 };
+
+// Hello everyone I'm Shem Regidro the team lead software developer
+// and project manager of Kabankalan City Emergency Response App or KCera
 
 export default App;

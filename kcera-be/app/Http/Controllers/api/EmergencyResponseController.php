@@ -31,6 +31,19 @@ class EmergencyResponseController extends BaseController
         return $this->sendResponse($responses, 'On-going responses');
     }
 
+    public function trackSpecificResponse(string $id): JsonResponse
+    {
+        $response = EmergencyResponse::with('report')
+            ->where('id', $id)
+            ->first();
+
+        if (!$response) {
+            return $this->sendError('Response not found.', [], 404);
+        }
+
+        return $this->sendResponse($response, 'response');
+    }
+
     public function createResponse(Request $request): JsonResponse
     {
         $user = Auth::user();
@@ -42,6 +55,7 @@ class EmergencyResponseController extends BaseController
         ]);
 
         if ($validator->fails()) {
+
             return $this->sendError("Validation Error", $validator->errors());
         }
 
@@ -80,12 +94,13 @@ class EmergencyResponseController extends BaseController
 
         $this->notificationRecord([
             'receiver_id' => $emergency->user_id,
-            'report_id' => $emergency->id,
+            'report_id' => $request->request_id,
             'response_id' => $response->id,
             'receiver_type' => 'reporter',
             'type' => 'Response',
             'title' => "Response is on the way",
-            'message' => "Your {$emergency->request_type} emergency reported on {$emergency->created_at->format('F j, Y g:i A')} has been picked up by responders. Click to track the response.",
+            'message' => "Your {$emergency->request_type} emergency reported cd kcera-be
+            on {$emergency->created_at->timezone('Asia/Manila')->format('F j, Y g:i A')} has been picked up by responders. Click to track the response.",
         ]);
 
         $logs = [

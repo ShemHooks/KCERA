@@ -13,11 +13,17 @@ class BaseController extends Controller
     {
         try {
             $notification = Notification::create($data);
+            \Log::info('Creating notification', [
+                'receiver_id' => $data->user_id,
+                'response_id' => $data->id
+            ]);
             return $notification;
         } catch (\Exception $e) {
             \Log::error("Notification record failed: " . $e->getMessage());
             return null;
         }
+
+
     }
 
     public function insertSystemLogs(array $data)

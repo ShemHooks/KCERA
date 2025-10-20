@@ -14,6 +14,9 @@ import HistoryIcon from "@mui/icons-material/History";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import FeedbackIcon from "@mui/icons-material/Feedback";
+import { SiOpenai } from "react-icons/si"; // OpenAI icon
+// or
+import { FaReact } from "react-icons/fa"; // React icon
 export const NAVIGATION = [
   {
     kind: "header",
@@ -96,10 +99,15 @@ export const NAVIGATION = [
     icon: <HistoryIcon />,
   },
   {
-    segment: "feedbacks",
-    title: "Feedbacks & Suggestions",
-    icon: <FeedbackIcon />,
+    segment: "ai",
+    title: "KCERA AI",
+    icon: <SiOpenai size={24} />,
   },
+  // {
+  //   segment: "feedbacks",
+  //   title: "Feedbacks & Suggestions",
+  //   icon: <FeedbackIcon />,
+  // },
   {
     kind: "divider",
   },
