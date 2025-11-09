@@ -19,6 +19,7 @@ const LoginApi = async (email, password) => {
     const user_status = response.data.data.approval;
     const token = response.data.data.token;
     const user_role = response.data.data.role;
+    const user_name = response.data.data.name;
 
     socket.emit("userStatusUpdated");
 
@@ -28,6 +29,7 @@ const LoginApi = async (email, password) => {
     } else {
       await SecureStore.setItemAsync("authToken", token);
       await SecureStore.setItemAsync("userRole", user_role);
+      await SecureStore.setItemAsync("userName", user_name);
       if (user_role === "residents") {
         router.replace(ROUTES.RESIDENTS.DASHBOARD);
       } else if (user_role === "driver") {

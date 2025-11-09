@@ -87,6 +87,7 @@ class AuthController extends BaseController
             $success['required_change_pass'] = $user->required_change_pass;
 
 
+
             $logs = [
                 'user_id' => $user['id'],
                 'user_role' => $user['role'],

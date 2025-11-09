@@ -46,7 +46,6 @@ const KCERAAIConsole = () => {
     <div className="flex flex-col h-[90vh] rounded-lg shadow-md overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-black   text-white">
       {/* Header */}
       <div className="p-4 text-lg font-semibold ">KCERA AI Console</div>
-
       {/* Chat Area */}
       <div className="flex-1 p-4 space-y-4 overflow-y-auto">
         {messages.map((msg, index) => (

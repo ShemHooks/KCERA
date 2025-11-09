@@ -48,29 +48,20 @@ const ResidentProfile = () => {
   };
 
   const goToAbout = () => {
-    router.replace(ROUTES.EVERYONE.ABOUT);
+    router.push(ROUTES.EVERYONE.ABOUT);
   };
 
   return (
-    <View>
+    <View style={styles.container}>
+      <View style={styles.HeaderView}>
+        <Text style={styles.title}>Settings</Text>
+      </View>
       <View style={styles.tabs}></View>
       <ScrollView>
         <View style={styles.tabs} className="p-4">
-          <TouchableOpacity style={styles.button} className="pl-4">
-            <View style={styles.profilePictureContainer}>
-              <Image source={defaultProfile} style={styles.profilePicture} />
-            </View>
-            <View>
-              <Text className="text-xl font-bold text-black">{userName}</Text>
-              <Text style={styles.label}> {"  "}View your profile</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.line}></View>
-        <View style={styles.tabs} className="p-4">
           <View>
             <Text className="text-lg font-bold" style={styles.label}>
-              ACCOUNT
+              Accounts
             </Text>
           </View>
           <TouchableOpacity style={styles.button} className="pl-4">
@@ -86,25 +77,6 @@ const ResidentProfile = () => {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.line}></View>
-        <View style={styles.tabs} className="p-4">
-          <View>
-            <Text className="text-lg font-bold" style={styles.label}>
-              SUPPORT
-            </Text>
-          </View>
-          <TouchableOpacity style={styles.button} className="pl-4">
-            <View>
-              <FontAwesome5 name="headset" size={30} color="#333" />
-            </View>
-            <View>
-              <Text className="text-xl font-bold text-black">
-                Report a Problem
-              </Text>
-              <Text style={styles.label}> {"  "}Contact Tech Support</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
         <View style={styles.line}></View>
         <View style={styles.tabs} className="p-4">
           <View>
@@ -147,6 +119,25 @@ const ResidentProfile = () => {
             </View>
           </TouchableOpacity>
         </View>
+        <View style={styles.line}></View>
+        <View style={styles.tabs} className="p-4">
+          <View>
+            <Text className="text-lg font-bold" style={styles.label}>
+              Support
+            </Text>
+          </View>
+          <TouchableOpacity style={styles.button} className="pl-4">
+            <View>
+              <FontAwesome5 name="headset" size={30} color="#333" />
+            </View>
+            <View>
+              <Text className="text-xl font-bold text-black">
+                Report a Problem
+              </Text>
+              <Text style={styles.label}> {"  "}Contact Tech Support</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
         <View style={[styles.line, styles.tabs]}></View>
         <View style={styles.tabs} className="p-4">
           <TouchableOpacity style={styles.logoutButton} onPress={logOut}>
@@ -161,23 +152,33 @@ const ResidentProfile = () => {
 export default ResidentProfile;
 
 const styles = StyleSheet.create({
+  // container: { backgroundColor: "#fff" },
+  HeaderView: {
+    padding: 15,
+    borderBottomWidth: 1,
+    borderColor: "#ddd",
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
   line: {
     height: 1,
     backgroundColor: "#ccc",
-    marginVertical: 10,
+    marginVertical: 7,
   },
-  tabs: { marginTop: 10, marginBottom: 10 },
+  tabs: { marginTop: 7, marginBottom: 7 },
   button: {
-    backgroundColor: "#fff",
+    backgroundColor: "#E8F9FE",
     height: 70,
-    elevation: 5,
+
     flexDirection: "row",
     alignItems: "center",
     gap: 20,
     borderRadius: 5,
   },
   logoutButton: {
-    backgroundColor: "#fff",
+    backgroundColor: "#E8F9FF",
     height: 50,
     justifyContent: "center",
     alignItems: "center",

@@ -117,80 +117,72 @@ const MapPage = () => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      <ScrollView>
-        <View style={{ alignItems: "center" }}>
-          <Image source={logo} style={styles.logo} />
-          <Text style={styles.pageTitle}>{pageTitle}</Text>
-        </View>
-
-        <View>
-          <MapView
-            style={styles.map}
-            mapType="hybrid"
-            initialRegion={{
-              latitude: coords?.latitude || 10.0125,
-              longitude: coords?.longitude || 122.8121,
-              latitudeDelta: 0.01,
-              longitudeDelta: 0.01,
-            }}
-          />
-          {/* Floating Weather Card */}
-          <View style={styles.weatherCard}>
-            {loading ? (
-              <ActivityIndicator size="large" color="#007AFF" />
-            ) : (
-              <>
-                <Text
-                  style={styles.location}
-                  className="text-center text-white"
-                >
-                  {locationName}
-                </Text>
-                <View style={styles.row}>
-                  <Text style={styles.temp} className="text-white">
-                    {condition.icon} {current.temperature_2m ?? "--"}°C
-                  </Text>
-                  <Text style={styles.temp} className="text-white">
-                    🕒{" "}
-                    {time.toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </Text>
-                </View>
-                <View style={styles.row}>
-                  <Text className="text-white">
-                    💧 {current.relative_humidity_2m ?? "--"}%
-                  </Text>
-                  <Text className="text-white">
-                    🌬️ {current.wind_speed_10m ?? "--"} km/h
-                  </Text>
-                  <Text className="text-white">
-                    ☀️ UV {current.uv_index ?? "--"}
-                  </Text>
-                </View>
-                <View style={styles.row}>
-                  <Text className="text-white">
-                    Feels: {current.apparent_temperature ?? "--"}°C
-                  </Text>
-                  <Text className="text-white">
-                    Pressure: {current.surface_pressure ?? "--"} hPa
-                  </Text>
-                </View>
-                <View style={styles.row}>
-                  <Text className="text-white">
-                    🌅 {formatTime(daily.sunrise?.[0])}
-                  </Text>
-                  <Text className="text-white">
-                    🌇 {formatTime(daily.sunset?.[0])}
-                  </Text>
-                </View>
-              </>
-            )}
-          </View>
-        </View>
-      </ScrollView>
+    <View
+      style={{ flex: 1, borderTopLeftRadius: 20, borderTopRightRadius: 20 }}
+    >
+      <View style={styles.container}>
+        <MapView
+          style={styles.map}
+          mapType="hybrid"
+          initialRegion={{
+            latitude: coords?.latitude || 10.0912665,
+            longitude: coords?.longitude || 122.7498264,
+            latitudeDelta: 11.93,
+            longitudeDelta: 11.93,
+          }}
+        />
+      </View>
+      {/* Floating Weather Card */}
+      <View style={styles.weatherCard}>
+        {loading ? (
+          <ActivityIndicator size="large" color="#007AFF" />
+        ) : (
+          <>
+            <Text style={styles.location} className="text-center text-white">
+              {locationName}
+            </Text>
+            <View style={styles.row}>
+              <Text style={styles.temp} className="text-white">
+                {condition.icon} {current.temperature_2m ?? "--"}°C
+              </Text>
+              <Text style={styles.temp} className="text-white">
+                🕒{" "}
+                {time.toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </Text>
+            </View>
+            <View style={styles.row}>
+              <Text className="text-white">
+                💧 {current.relative_humidity_2m ?? "--"}%
+              </Text>
+              <Text className="text-white">
+                🌬️ {current.wind_speed_10m ?? "--"} km/h
+              </Text>
+              <Text className="text-white">
+                ☀️ UV {current.uv_index ?? "--"}
+              </Text>
+            </View>
+            <View style={styles.row}>
+              <Text className="text-white">
+                Feels: {current.apparent_temperature ?? "--"}°C
+              </Text>
+              <Text className="text-white">
+                Pressure: {current.surface_pressure ?? "--"} hPa
+              </Text>
+            </View>
+            <View style={styles.row}>
+              <Text className="text-white">
+                🌅 {formatTime(daily.sunrise?.[0])}
+              </Text>
+              <Text className="text-white">
+                🌇 {formatTime(daily.sunset?.[0])}
+              </Text>
+            </View>
+          </>
+        )}
+      </View>
     </View>
   );
 };
@@ -198,19 +190,18 @@ const MapPage = () => {
 export default MapPage;
 
 const styles = StyleSheet.create({
-  logo: {
-    width: 100,
-    height: 100,
-    resizeMode: "contain",
-  },
   pageTitle: {
     fontSize: 18,
     fontWeight: "bold",
   },
+  container: {
+    flex: 1,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    overflow: "hidden",
+  },
   map: {
-    width: "100%",
-    height: 500,
-    marginTop: 10,
+    flex: 1,
   },
   weatherCard: {
     position: "absolute",
@@ -221,6 +212,8 @@ const styles = StyleSheet.create({
     padding: 20,
     elevation: 5,
     height: "100%",
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
   },
   location: {
     fontSize: 20,

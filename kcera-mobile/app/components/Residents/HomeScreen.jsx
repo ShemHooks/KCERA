@@ -1,4 +1,15 @@
-import { View, Text, Image, ScrollView, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
+import ROUTES from "../../constant/routes";
+
+import { router } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 const group_picture = require("../../../assets/app-images/dev-team/grouppic.jpg");
 const logo = require("../../../assets/app-images/KCERA.png");
@@ -11,12 +22,25 @@ const tabligan = require("../../../assets/app-images/dev-team/tabligan.jpg");
 
 const HomeScreen = () => {
   const pageTitle = "About KCERA";
+
+  // const goBack = () => {
+  //   router.replace(ROUTES.RESIDENTS.DASHBOARD);
+  // };
   return (
-    <View className="w-full ">
+    <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
-        <View className="flex items-center ">
-          <Image source={logo} style={styles.logo} />
-          <Text className="text-xl font-bold ">{pageTitle}</Text>
+        <View>
+          <View style={styles.upper}>
+            <TouchableOpacity onPress={() => router.back()}>
+              <Text>
+                <Ionicons name="arrow-back-outline" size={30} color="#11224E" />
+              </Text>
+            </TouchableOpacity>
+            <Image source={logo} style={styles.logo} />
+          </View>
+          <View style={styles.titleHolder}>
+            <Text className="text-xl font-bold ">{pageTitle}</Text>
+          </View>
         </View>
         <View style={styles.tabs} className="pl-4">
           <Text className="text-lg text-left">
@@ -94,7 +118,7 @@ const HomeScreen = () => {
               <View style={styles.personalDescription}>
                 <Text className="text-xl font-bold">SHEM M. REGIDOR</Text>
                 <Text className="pl-4 text-left">
-                  Team Leader, Project Manager, Lead Developer
+                  Team Leader, Project Manager, Developer
                 </Text>
                 <Text></Text>
                 <Text className="pl-4 text-left">
@@ -111,14 +135,12 @@ const HomeScreen = () => {
               </View>
               <View style={styles.personalDescription}>
                 <Text className="text-xl font-bold">CHRISTIAN I. TIRADO</Text>
-                <Text className="pl-4 text-left">
-                  Admin Side Front-end Developer, Lead Manuscript Writer
-                </Text>
+                <Text className="pl-4 text-left">Project UI/UX Designer</Text>
                 <Text></Text>
                 <Text className="pl-4 text-left">
-                  Developed the admin-side user interface and played a central
-                  role in writing and organizing the project’s documentation and
-                  manuscripts.
+                  Crafted innovative UI/UX designs that enhanced user
+                  interaction, accessibility, and overall satisfaction with the
+                  application.
                 </Text>
               </View>
             </View>
@@ -132,7 +154,7 @@ const HomeScreen = () => {
                   CLARENCE KYLE YNCHAUSTI
                 </Text>
                 <Text className="pl-4 text-left">
-                  Manuscript Writer, System Graphics Designer, Logistics
+                  Researcher, System Graphics Designer, Logistics
                 </Text>
                 <Text></Text>
                 <Text className="pl-4 text-left">
@@ -152,7 +174,7 @@ const HomeScreen = () => {
                   RAVEN DOMINIC A. PELINGON
                 </Text>
                 <Text className="pl-4 text-left">
-                  Manuscript Writer, Logistics, Contributor
+                  Researcher, Logistics, Contributor
                 </Text>
                 <Text></Text>
                 <Text className="pl-4 text-left">
@@ -222,6 +244,20 @@ const HomeScreen = () => {
 export default HomeScreen;
 
 const styles = StyleSheet.create({
+  container: {
+    marginTop: 30,
+  },
+  upper: {
+    width: "62%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingLeft: 20,
+  },
+  titleHolder: {
+    alignItems: "center",
+  },
+
   scrollView: { marginTop: 2 },
   logo: {
     width: 100,

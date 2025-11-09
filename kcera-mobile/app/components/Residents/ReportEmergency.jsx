@@ -6,16 +6,18 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  Modal,
   ActivityIndicator,
+  Platform,
 } from "react-native";
-import MapView, { Marker, UrlTile, PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, { Marker, UrlTile } from "react-native-maps";
 import * as Location from "expo-location";
-import { useEffect, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
+import { useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
+import GestureRecognizer from "react-native-swipe-gestures";
 import SendRequestApi from "../../api/residents/SendRequestApi";
-import Index from "./../../index";
+import ReportSuccess from "./ReportSuccess";
+import ReportSimilar from "./ReportSimilar";
 
 const fire = require("../../../assets/app-images/Emergency/fire.png");
 const flood = require("../../../assets/app-images/Emergency/flood.jpg");
@@ -23,51 +25,58 @@ const land_slide = require("../../../assets/app-images/Emergency/landslide.jpg")
 const medical = require("../../../assets/app-images/Emergency/medical.jpg");
 const traffic = require("../../../assets/app-images/Emergency/traffic.jpg");
 
-const logo = require("../../../assets/app-images/KCERA.png");
-const pageTitle = "Emergecny Reporting";
-
 const ReportEmergency = () => {
   const [userLocation, setUserLocation] = useState(null);
   const [pinnedLocation, setPinnedLocation] = useState(null);
   const [image, setImage] = useState(null);
   const [displayImage, setDisplayImage] = useState(null);
-
   const [emergencyType, setEmergencyType] = useState(null);
+  const [currentStep, setCurrentStep] = useState(1);
 
   const [isSuccess, setIsSuccess] = useState(false);
   const [message, setMessage] = useState("");
-  const [modalVisible, setModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     getLocation();
+    requestMediaPermission();
   }, []);
 
   const getLocation = async () => {
-    let { status } = await Location.requestForegroundPermissionsAsync();
-
+    const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
-      alert("permission denied");
+      alert("Permission denied to access location.");
       return;
     }
-
-    let location = await Location.getCurrentPositionAsync({});
+    const location = await Location.getCurrentPositionAsync({});
     setUserLocation(location);
   };
 
-  useEffect(() => {
-    const requestMediaPermission = async () => {
-      if (Platform.OS !== "web") {
-        const { status } =
-          await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== "granted") {
-          alert("Permission to access media library is required!");
-        }
+  const requestMediaPermission = async () => {
+    if (Platform.OS !== "web") {
+      const { status } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        alert("Permission to access media library is required!");
       }
-    };
+    }
+  };
 
-    requestMediaPermission();
-  }, []);
+  useEffect(() => {
+    if (emergencyType && currentStep === 1) setCurrentStep(2);
+  }, [emergencyType]);
+
+  useEffect(() => {
+    if (pinnedLocation && currentStep === 2) setCurrentStep(3);
+  }, [pinnedLocation]);
+
+  const onSwipeLeft = () => {
+    if (currentStep < 3) setCurrentStep((prev) => prev + 1);
+  };
+
+  const onSwipeRight = () => {
+    if (currentStep > 1) setCurrentStep((prev) => prev - 1);
+  };
 
   const takePhoto = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
@@ -84,15 +93,12 @@ const ReportEmergency = () => {
 
     if (!result.canceled) {
       const asset = result.assets[0];
-
       const mimeType =
         asset.type === "image"
           ? "image/jpeg"
           : asset.type === "video"
           ? "video/mp4"
           : asset.type;
-
-      console.log("Mime Type: ", mimeType);
 
       setImage({
         uri: asset.uri,
@@ -114,32 +120,20 @@ const ReportEmergency = () => {
       const result = response.success;
 
       if (result?.status === 200) {
-        setMessage("Request submitted successfully! Thank You");
+        setMessage("Success");
         setIsSuccess(true);
-        setIsLoading(false);
-        setModalVisible(true);
       } else if (result?.status === 409) {
-        setMessage(
-          "Similar Emergency has been reported already. Response is on its way. Thank You!"
-        );
+        setMessage("Similar");
         setIsSuccess(true);
-        setIsLoading(false);
-        setModalVisible(true);
       } else {
-        setMessage("Failed to submit request.");
+        setMessage("Failed");
         setIsSuccess(true);
-        setIsLoading(false);
       }
     } catch (error) {
-      setIsSuccess(false);
-      setIsLoading(false);
       alert("An error occurred while submitting.");
+    } finally {
+      setIsLoading(false);
     }
-  };
-
-  const clickOK = () => {
-    setModalVisible(false);
-    resetForm();
   };
 
   const resetForm = () => {
@@ -148,6 +142,8 @@ const ReportEmergency = () => {
     setDisplayImage(null);
     setPinnedLocation(null);
     setIsSuccess(false);
+    setMessage("");
+    setCurrentStep(1);
   };
 
   return (
@@ -160,193 +156,162 @@ const ReportEmergency = () => {
           </Text>
         </View>
       )}
-      <ScrollView contentContainerStyle={styles.container}>
-        <View className="flex items-center ">
-          <Image source={logo} style={styles.logo} />
-          <Text className="text-lg font-bold ">{pageTitle}</Text>
-        </View>
-        <View style={styles.emergencyView}>
-          <Text className="mt-4 mb-2 text-xl font-bold ">
-            What kind of incident are you reporting?
-          </Text>
 
-          <View style={styles.buttonsContainer}>
-            {/*  */}
-            <TouchableOpacity
-              onPress={() => setEmergencyType("traffic")}
-              style={[
-                styles.incidentButton,
-                emergencyType === "traffic" && styles.selectedIncident,
-              ]}
-            >
-              <Image source={traffic} style={styles.buttonImage} />
-              <Text style={styles.buttonText}>Traffic Accident</Text>
-            </TouchableOpacity>
-            {/*  */}
-            <TouchableOpacity
-              onPress={() => setEmergencyType("fire")}
-              style={[
-                styles.incidentButton,
-                emergencyType === "fire" && styles.selectedIncident,
-              ]}
-            >
-              <Image source={fire} style={styles.buttonImage} />
-              <Text style={styles.buttonText}>Fire Incidents</Text>
-            </TouchableOpacity>
-            {/*  */}
-            <TouchableOpacity
-              onPress={() => setEmergencyType("medical")}
-              style={[
-                styles.incidentButton,
-                emergencyType === "medical" && styles.selectedIncident,
-              ]}
-            >
-              <Image source={medical} style={styles.buttonImage} />
-              <Text style={styles.buttonText}>Medical Emergencies</Text>
-            </TouchableOpacity>
-            {/*  */}
-            <TouchableOpacity
-              onPress={() => setEmergencyType("flood")}
-              style={[
-                styles.incidentButton,
-                emergencyType === "flood" && styles.selectedIncident,
-              ]}
-            >
-              <Image source={flood} style={styles.buttonImage} />
-              <Text style={styles.buttonText}>Flood</Text>
-            </TouchableOpacity>
-            {/*  */}
-            <TouchableOpacity
-              onPress={() => setEmergencyType("landslide")}
-              style={[
-                styles.incidentButton,
-                emergencyType === "landslide" && styles.selectedIncident,
-              ]}
-            >
-              <Image source={land_slide} style={styles.buttonImage} />
-              <Text style={styles.buttonText}>Landslide Incidents</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.mapContainer}>
-            <Text className="mt-4 mb-2 text-xl font-bold ">
-              Where is the location of the emergency?
-            </Text>
-            <MapView
-              style={styles.map}
-              initialRegion={{
-                latitude: userLocation ? userLocation.coords.latitude : 10.0125,
-                longitude: userLocation
-                  ? userLocation.coords.longitude
-                  : 122.8121,
-                latitudeDelta: 0.01,
-                longitudeDelta: 0.01,
-              }}
-              onPress={(e) => {
-                const { latitude, longitude } = e.nativeEvent.coordinate;
-                setPinnedLocation({ latitude, longitude });
-              }}
-            >
-              <UrlTile
-                urlTemplate="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-                maximumZ={19}
-                flipY={false}
-                zIndex={1}
-              />
-
-              <UrlTile
-                urlTemplate="https://cartodb-basemaps-a.global.ssl.fastly.net/light_only_labels/{z}/{x}/{y}.png"
-                zIndex={2}
-              />
-
-              {/* Current Location */}
-              {userLocation?.coords && (
-                <Marker
-                  coordinate={{
-                    latitude: userLocation.coords.latitude,
-                    longitude: userLocation.coords.longitude,
-                  }}
-                  title="My Location"
-                  pinColor="blue"
-                />
+      <GestureRecognizer onSwipeLeft={onSwipeLeft} onSwipeRight={onSwipeRight}>
+        <ScrollView contentContainerStyle={styles.container}>
+          {!isSuccess ? (
+            <>
+              {/* STEP 1: Select Type */}
+              {currentStep === 1 && (
+                <View style={styles.emergencyView}>
+                  <Text style={styles.text}>Select Type of Incident</Text>
+                  <View style={styles.buttonsContainer}>
+                    {[
+                      {
+                        type: "traffic",
+                        img: traffic,
+                        label: "Traffic Accident",
+                      },
+                      { type: "fire", img: fire, label: "Fire Incidents" },
+                      {
+                        type: "medical",
+                        img: medical,
+                        label: "Medical Emergencies",
+                      },
+                      { type: "flood", img: flood, label: "Flood" },
+                      {
+                        type: "landslide",
+                        img: land_slide,
+                        label: "Landslide Incidents",
+                      },
+                    ].map((item) => (
+                      <TouchableOpacity
+                        key={item.type}
+                        onPress={() => setEmergencyType(item.type)}
+                        style={[
+                          styles.incidentButton,
+                          emergencyType === item.type &&
+                            styles.selectedIncident,
+                        ]}
+                      >
+                        <Image source={item.img} style={styles.buttonImage} />
+                        <Text style={styles.buttonText}>{item.label}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
               )}
 
-              {/* Pinned Location */}
-              {pinnedLocation && (
-                <Marker
-                  coordinate={pinnedLocation}
-                  title="Pinned Location"
-                  pinColor="red"
-                  draggable
-                  onDragEnd={(e) => setPinnedLocation(e.nativeEvent.coordinate)}
-                />
-              )}
-            </MapView>
-
-            <TouchableOpacity
-              style={styles.useLocationBtn}
-              onPress={() => {
-                if (userLocation?.coords) {
-                  setPinnedLocation({
-                    latitude: userLocation.coords.latitude,
-                    longitude: userLocation.coords.longitude,
-                  });
-                }
-              }}
-            >
-              <Text style={styles.useLocationBtnText}>
-                Use My Current Location
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <View>
-            {typeof displayImage === "string" && displayImage !== "" && (
-              <View style={styles.imageView}>
-                <Image
-                  source={{ uri: displayImage }}
-                  style={styles.cameraPhoto}
-                />
-              </View>
-            )}
-
-            <TouchableOpacity onPress={takePhoto} style={styles.cameraButton}>
-              <Ionicons name="camera-outline" size={24} color="#757575" />
-              <Text>{image ? "Retake Photo" : "Take a Photo"}</Text>
-            </TouchableOpacity>
-          </View>
-          {emergencyType && image && pinnedLocation ? (
-            <View>
-              <TouchableOpacity
-                style={styles.submitButton}
-                onPress={submitRequest}
-              >
-                <Text className="font-bold">Submit</Text>
-              </TouchableOpacity>
-            </View>
-          ) : null}
-
-          {isSuccess && (
-            <Modal
-              animationType="fade"
-              transparent={true}
-              visible={modalVisible}
-              onRequestClose={() => setModalVisible(false)}
-            >
-              <View style={styles.modalOverlay}>
-                <View style={styles.modalContainer}>
-                  <Text style={styles.modalText}>{message}</Text>
-                  <TouchableOpacity
-                    style={styles.modalButton}
-                    onPress={clickOK}
+              {/* STEP 2: Pin Location */}
+              {currentStep === 2 && (
+                <View style={styles.mapContainer}>
+                  <Text style={styles.text}>Pin Incident Location?</Text>
+                  <MapView
+                    style={styles.map}
+                    initialRegion={{
+                      latitude: userLocation
+                        ? userLocation.coords.latitude
+                        : 10.0125,
+                      longitude: userLocation
+                        ? userLocation.coords.longitude
+                        : 122.8121,
+                      latitudeDelta: 0.01,
+                      longitudeDelta: 0.01,
+                    }}
+                    onPress={(e) => setPinnedLocation(e.nativeEvent.coordinate)}
                   >
-                    <Text style={styles.modalButtonText}>OK</Text>
+                    <UrlTile
+                      urlTemplate="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                      maximumZ={19}
+                    />
+                    <UrlTile urlTemplate="https://cartodb-basemaps-a.global.ssl.fastly.net/light_only_labels/{z}/{x}/{y}.png" />
+
+                    {userLocation?.coords && (
+                      <Marker
+                        coordinate={{
+                          latitude: userLocation.coords.latitude,
+                          longitude: userLocation.coords.longitude,
+                        }}
+                        title="My Location"
+                        pinColor="blue"
+                      />
+                    )}
+
+                    {pinnedLocation && (
+                      <Marker
+                        coordinate={pinnedLocation}
+                        title="Pinned Location"
+                        pinColor="red"
+                        draggable
+                        onDragEnd={(e) =>
+                          setPinnedLocation(e.nativeEvent.coordinate)
+                        }
+                      />
+                    )}
+                  </MapView>
+
+                  <TouchableOpacity
+                    style={styles.useLocationBtn}
+                    onPress={() => {
+                      if (userLocation?.coords) {
+                        setPinnedLocation({
+                          latitude: userLocation.coords.latitude,
+                          longitude: userLocation.coords.longitude,
+                        });
+                      }
+                    }}
+                  >
+                    <Text style={styles.useLocationBtnText}>
+                      Use My Current Location
+                    </Text>
                   </TouchableOpacity>
                 </View>
-              </View>
-            </Modal>
+              )}
+
+              {/* STEP 3: Upload Photo & Submit */}
+              {currentStep === 3 && (
+                <View>
+                  {displayImage && (
+                    <View style={styles.imageView}>
+                      <Image
+                        source={{ uri: displayImage }}
+                        style={styles.cameraPhoto}
+                      />
+                    </View>
+                  )}
+
+                  <TouchableOpacity
+                    onPress={takePhoto}
+                    style={styles.cameraButton}
+                  >
+                    <Ionicons name="camera-outline" size={30} color="#757575" />
+                    <Text>{image ? "Retake Photo" : "Take a Photo"}</Text>
+                  </TouchableOpacity>
+
+                  {emergencyType && image && pinnedLocation && (
+                    <TouchableOpacity
+                      style={styles.submitButton}
+                      onPress={submitRequest}
+                    >
+                      <Text className="font-bold">Submit</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              )}
+            </>
+          ) : (
+            <View style={styles.successContainer}>
+              {message === "Success" && <ReportSuccess onGoHome={resetForm} />}
+              {message === "Similar" && <ReportSimilar />}
+              {message === "Failed" && (
+                <Text style={styles.similarText}>
+                  Failed to submit your report. Please try again.
+                </Text>
+              )}
+            </View>
           )}
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </GestureRecognizer>
     </View>
   );
 };
@@ -354,34 +319,27 @@ const ReportEmergency = () => {
 export default ReportEmergency;
 
 const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: 16,
-    paddingBottom: 24,
-  },
-  logo: {
-    width: 100,
-    height: 100,
-    resizeMode: "contain",
-  },
-  emergencyView: {
-    marginTop: 20,
-  },
+  container: { paddingHorizontal: 16, paddingBottom: 24 },
+  text: { fontSize: 25, fontWeight: "bold" },
+  emergencyView: { marginTop: 30 },
   buttonsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
-    gap: 12,
+    gap: 4,
+    marginTop: 20,
   },
   incidentButton: {
-    backgroundColor: "transparent",
+    backgroundColor: "#fff",
     width: "48%",
     marginBottom: 12,
     paddingVertical: 12,
     paddingHorizontal: 8,
     borderRadius: 10,
     alignItems: "center",
-    elevation: 1,
+    elevation: 5,
   },
+  selectedIncident: { borderWidth: 1, borderColor: "red" },
   buttonText: {
     color: "#000",
     fontWeight: "bold",
@@ -389,21 +347,15 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 8,
   },
-  buttonImage: {
-    width: 100,
-    height: 100,
-  },
+  buttonImage: { width: 100, height: 100 },
   mapContainer: {
-    marginTop: 16,
-    height: 500,
+    marginTop: 20,
+    gap: 20,
+    height: 550,
     borderRadius: 10,
     overflow: "hidden",
   },
-
-  map: {
-    flex: 1,
-  },
-
+  map: { flex: 1 },
   useLocationBtn: {
     position: "absolute",
     bottom: 20,
@@ -414,13 +366,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     elevation: 4,
   },
-
-  useLocationBtnText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-
+  useLocationBtnText: { color: "#fff", fontWeight: "bold", fontSize: 16 },
   cameraButton: {
     marginTop: 30,
     marginBottom: 12,
@@ -434,24 +380,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 8,
   },
-
   imageView: {
     marginTop: 16,
     height: 500,
     borderRadius: 10,
     overflow: "hidden",
   },
-
-  cameraPhoto: {
-    width: "100%",
-    height: "100%",
-  },
-
-  selectedIncident: {
-    borderWidth: 1,
-    borderColor: "red",
-  },
-
+  cameraPhoto: { width: "100%", height: "100%" },
   submitButton: {
     marginTop: 30,
     marginBottom: 12,
@@ -461,28 +396,19 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     elevation: 5,
     alignItems: "center",
-    flexDirection: "row",
     justifyContent: "center",
-    gap: 8,
   },
-  modalOverlay: {
+  successContainer: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
     justifyContent: "center",
     alignItems: "center",
+    paddingVertical: 50,
   },
-  modalContainer: {
-    backgroundColor: "#fff",
-    padding: 24,
-    borderRadius: 12,
-    width: "80%",
-    alignItems: "center",
-    elevation: 10,
-  },
-  modalText: {
+  similarText: {
     fontSize: 18,
-    marginBottom: 16,
+    color: "#555",
     textAlign: "center",
+    marginBottom: 20,
   },
   modalButton: {
     backgroundColor: "#007BFF",
@@ -490,10 +416,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     borderRadius: 8,
   },
-  modalButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
+  modalButtonText: { color: "#fff", fontWeight: "bold" },
   loadingOverlay: {
     position: "absolute",
     top: 0,

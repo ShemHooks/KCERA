@@ -62,7 +62,7 @@ export default function Histories() {
   };
 
   return (
-    <div className="flex min-h-screen text-white bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+    <div className="flex text-white bg-gradient-to-br from-gray-900 via-gray-800 to-black">
       <main className="flex-1 p-6">
         <h2 className="mb-4 text-2xl font-semibold">
           {viewType === "reports" ? "Report Histories" : "Response Histories"}
